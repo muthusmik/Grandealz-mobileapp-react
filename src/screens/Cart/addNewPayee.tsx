@@ -33,7 +33,7 @@ const AddNewPayee = () => {
                     value={isSelected}
                     onValueChange={setSelection}
                     style={styles.checkBox}
-                    tintColors={{ true: COLORS.primary }}
+                    tintColors={{ true: COLORS.element }}
                 />
 
             </View>
@@ -46,7 +46,7 @@ const AddNewPayee = () => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft: horizontalScale(18), flexDirection: "column" }}>
                     <EntypoIcons name="chevron-left" size={30} style={{ flexDirection: "column" }} color={"white"} />
                 </TouchableOpacity>
-                <Text style={{ fontFamily: "Lexend-SemiBold", color: "white", fontSize: RFValue(24), marginStart: "15%" }}>Add New Card</Text>
+                <Text style={{ fontFamily: "Lexend-SemiBold", color: "white", fontSize: RFValue(20), width: "80%", textAlign: "center" }}>Add New Card</Text>
             </View>
             <View style={{ borderColor: "red", width: "100%", padding: "4%", height: verticalScale(740) }}>
                 <View style={{ borderRadius: 8, width: "100%", backgroundColor: COLORS.white }}>
@@ -54,8 +54,7 @@ const AddNewPayee = () => {
                     <TextInput
                         keyboardType={"number-pad"}
                         placeholder="xxxx xxxx xxxx xxxx"
-                        maxLength={10}
-
+                        maxLength={16}
                         placeholderTextColor={COLORS.textHeader}
                         style={{ marginStart: "5%", fontSize: RFValue(20), ...FONTS.lexendregular, color: COLORS.black }}
                     />
@@ -65,10 +64,9 @@ const AddNewPayee = () => {
                         <View style={{ borderRadius: 8, width: "95%", backgroundColor: COLORS.white }}>
                             <Text style={{ color: COLORS.gray, fontSize: RFValue(10), marginHorizontal: "5%", marginTop: "3%", ...FONTS.lexendregular }}>Expiry Date</Text>
                             <TextInput
-                                keyboardType={"number-pad"}
+                                keyboardType={"numbers-and-punctuation"}
                                 placeholder="xx/xx"
-                                maxLength={10}
-
+                                maxLength={5}
                                 placeholderTextColor={COLORS.textHeader}
                                 style={{ marginStart: "5%", fontSize: RFValue(20), ...FONTS.lexendregular, color: COLORS.black }}
                             />
@@ -80,7 +78,7 @@ const AddNewPayee = () => {
                             <TextInput
                                 keyboardType={"number-pad"}
                                 placeholder="xxx"
-                                maxLength={10}
+                                maxLength={3}
 
                                 placeholderTextColor={COLORS.textHeader}
                                 style={{ marginStart: "5%", fontSize: RFValue(20), ...FONTS.lexendregular, color: COLORS.black }}

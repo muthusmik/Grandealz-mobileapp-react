@@ -25,62 +25,49 @@ import { COLORS, FONTS } from "../constants";
 import { useDispatch } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { forgotPasswordHandler } from "../store/reducers/forgotPassword";
+import LoaderKit from 'react-native-loader-kit';
+import Toast from 'react-native-simple-toast';
 
 const ForgetPassword = () => {
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [forgetEmail, setForgetEmail] = useState('')
-  const [error, setError] = useState()
+  const [forgetEmail, setForgetEmail] = useState<any>('')
+  const [error, setError] = useState<any>();
+  const [loader, setLoader] = useState<any>(false);
   // console.log("ForgetPAss.........", forgetEmail);
 
   const validateEmail = () => {
+
     if (forgetEmail.length == 0) {
       setError('Please enter your EmailID');
     }
     else if (forgetEmail !== undefined) {
-      // console.log("..............",forgetEmail);
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(forgetEmail)) {
         setError("Invalid EmailID");
       }
       else {
         setError("");
-        // console.log("data.......", forgetEmail);
         const value = {
-          "email": forgetEmail
+          "email": forgetEmail.toLowerCase()
         };
-        // console.log("data.......data", forgetEmail);
-
+        setLoader(true)
         dispatch(forgotPasswordHandler(value)).then(unwrapResult).then((originalPromiseResult) => {
           console.log("successfully returned to ForgetPassword with response ", originalPromiseResult);
-          if (originalPromiseResult==="Please check your registered email to reset your password.") {
-            ToastAndroid.showWithGravity(
+          if (originalPromiseResult === "Please check your registered email to reset your password.") {
+            Toast.show(
               originalPromiseResult,
-              // 'Please check your registered email to reset your password.',
-              ToastAndroid.SHORT,
-              ToastAndroid.CENTER,
-            );
+              Toast.LONG, { backgroundColor: 'red' });
             setForgetEmail('')
-            navigation.navigate('OtpPage')
+            setLoader(false)
+            navigation.navigate('login')
           }
-          // else if(originalPromiseResult==="undefined"){
-          //   ToastAndroid.showWithGravity(
-          //     'Please try again later.',
-          //     ToastAndroid.SHORT,
-          //     ToastAndroid.CENTER,
-          //   );
-          // }
-          else{
-            ToastAndroid.showWithGravity(
+          else {
+            setLoader(false);
+            Toast.show(
               originalPromiseResult,
-              ToastAndroid.SHORT,
-              ToastAndroid.CENTER,
-            );
-            // setError(originalPromiseResult)
-            // console.log("error....",error);
+              Toast.LONG, { backgroundColor: 'red' });
           }
-          // console.log(ori);
-          
         })
       }
     }
@@ -114,26 +101,39 @@ const ForgetPassword = () => {
           <Text style={{ width: horizontalScale(300), fontSize: RFValue(13), color: "black", marginTop: verticalScale(26), fontFamily: "Lexend-Regular" }}>
             Enter your registered email address and we will send you a link to reset your password :
           </Text>
-          <View style={{ alignSelf: "center", flexDirection: "row", borderWidth: 1, paddingStart: 10, borderRadius: 8, borderColor: "#c4c4c2", width: horizontalScale(300), marginTop: verticalScale(32), color: "#000" }}>
+          <View style={{ alignSelf: "center", flexDirection: "row", borderWidth: 1, paddingStart: 10, borderRadius: 8, borderColor: "#c4c4c2", width: horizontalScale(300), marginTop: verticalScale(32) }}>
             <TextInput
               placeholder="Email"
+              maxLength={30}
               placeholderTextColor={"black"}
               onChangeText={(text: String) => setForgetEmail(text)}
               value={forgetEmail}
-              style={{ flexDirection: "column", width: horizontalScale(250), ...FONTS.lexendregular, fontSize: RFValue(14),color:COLORS.black }}
+              style={{ flexDirection: "column", width: horizontalScale(250), ...FONTS.lexendregular, fontSize: RFValue(14), color: COLORS.black }}
             />
-            <Fontisto name='email' size={30} style={{ alignSelf: "center",color:COLORS.gray }} />
+            <Fontisto name='email' size={30} style={{ alignSelf: "center", color: COLORS.gray }} />
           </View>
         </View>
         <View style={{ height: "5%" }}>
           {error ? <Text style={{ ...FONTS.lexendregular, color: COLORS.element, fontSize: RFValue(12), paddingStart: "7%" }}>{error}</Text> : null}
         </View>
-        <TouchableOpacity style={{ alignSelf: "center", marginTop: "12%", borderWidth: 1, borderRadius: 8, width: horizontalScale(200), padding: "4%" }}
-          onPress={() => validateEmail()}
-        >
-          <Text style={{ textAlign: "center", fontSize: 16, fontFamily: "Lexend-SemiBold", color: "black" }}>Submit</Text>
-        </TouchableOpacity>
+        {loader ?
+          <View style={{ width: "100%", alignItems: "center", height: "92%", }}>
+            <LoaderKit
+              style={{ width: 100, height: 105 }}
+              name={'BallPulse'} // Optional: see list of animations below
+              size={30} // Required on iOS
+              color={COLORS.element} // Optional: color can be: 'red', 'green',... or '#ddd', '#FFFFFF',
+            />
+          </View>
+          :
+          <TouchableOpacity style={{ alignSelf: "center", marginTop: "8%", borderWidth: 1, borderRadius: 8, width: horizontalScale(200), padding: "4%" }}
+            onPress={() => validateEmail()}
+          >
+            <Text style={{ textAlign: "center", fontSize: 16, fontFamily: "Lexend-SemiBold", color: "black" }}>Submit</Text>
+          </TouchableOpacity>
+        }
       </View>
+
     </SafeAreaView>
   )
 }

@@ -11,6 +11,6 @@ export const activeTicketGet = async () => {
         console.log("Responce in active ticket call",response.data.data);
         return response.data.data
     }).catch((err) => {
-        console.log("catch error Api error", err);
+        console.log("catch error Api error .. act ticke..", err);
     })
 }

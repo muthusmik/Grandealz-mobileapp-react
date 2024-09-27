@@ -5,9 +5,10 @@ import axios from 'axios'
 export const productDrawHandler = createAsyncThunk('get/drawProductGetcall', async (data,thunkAPI) => {
 
     try {
+        console.log("inside..... ")
         const payload = data;
-        let result = await axios.get(`${'https://api.grandealz.vytech.co'}/draws`);
-        // console.log("result inside the login page.....",result.data.data)
+        let result = await axios.get(`${'https://api.grandealz.vytech.co'}/draws?limit=200&skip=0&status=Publish`);
+        console.log("result mmmm page.....",result.data.data)
         // if (parseInt(result.data.status) === 200) {
         //     console.log({ responseData: result.data.data });
         //     return result.data
@@ -27,7 +28,7 @@ export const productDrawHandler = createAsyncThunk('get/drawProductGetcall', asy
 export const productDrawHandleSlice = createSlice({
     name: 'productDrawHandle',
     initialState: {
-        data: "No data",
+        data: "",
         isSuccess: false,
         message: "",
         loading: false,

@@ -1,4 +1,4 @@
-import React, { type PropsWithChildren,useState,useEffect } from 'react';
+import React, { type PropsWithChildren, useState, useEffect } from 'react';
 import {
     SafeAreaView,
     ScrollView,
@@ -17,87 +17,44 @@ import { COLORS, FONTS } from '../../constants';
 import { horizontalScale, verticalScale } from '../../constants/metrices';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { drawCommingGet } from '../../services/register';
-const data = [
-    {
-        id: '1',
-        imag: image.whitecar,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
+import { ActivityIndicator } from 'react-native';
+import DrawEmpty from '../ExceptionScreens/DrawEmpty';
 
-    },
-    {
-        id: '2',
-        imag: image.whitecar,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-    {
-        id: '3',
-        imag: image.whitecar,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-    {
-        id: '4',
-        imag: image.whitecar,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-    {
-        id: '5',
-        imag: image.whitecar,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-    {
-        id: '6',
-        imag: image.whitecar,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-
-];
-const UpcomingDraws = () => {
-
+const UpcomingDraws = (filter) => {
+    console.log("filter", filter.son)
     const [close, setClose] = useState<any>();
-    //drawGetCall
-    useEffect(() => {
-      //console.log("data..............");
-      const data="status=UpComming"
-      const soon = async () => {
-        let closingData = await drawCommingGet(data)
-        let result = closingData.data;
-        console.log("im inside the upcomming page ",result);
-        setClose(result)
-      }
-      soon();
-  
-    }, [])
-    return (
 
-        <FlatList
-            data={close}
-            contentContainerStyle={{ width: "91%", alignSelf: "center", marginTop: "2%" }}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-                <View style={{ borderRadius: 9, backgroundColor: "white", alignItems: "center", paddingVertical: verticalScale(20), marginBottom: "5%" }}>
-                    <TouchableOpacity>
-                        <View>
-                            <Image
-                                source={{uri: item.draw_image}}
-                                resizeMode={"contain"}
-                                style={{ height:verticalScale(150), width: horizontalScale(310)}}
-                            />
+    useEffect(() => {
+        setClose(filter.son)
+    }, [filter])
+    return (
+        <View style={{ paddingHorizontal: 18 }}>
+            {(filter.son).length > 0 ?
+                <FlatList
+                    data={close}
+                    contentContainerStyle={{ marginTop: 10 }}
+                    keyExtractor={item => item.id}
+                    renderItem={({ item }) => (
+                        <View style={{ borderRadius: 5, backgroundColor: "white", paddingVertical: 16, marginBottom: 14 }}>
+                            <TouchableOpacity style={{ width: "90%", alignSelf: "center" }}>
+                                <View style={{ height: verticalScale(180), width: "100%", alignSelf: "center" }}>
+                                    <Image
+                                        source={{ uri: item.draw_image }}
+                                        resizeMode="contain"
+                                        style={{ height: "100%", width: "100%", borderRadius: 5 }}
+                                    />
+                                </View>
+                                <View style={{ marginTop: 5 }}>
+                                    <Text style={{ fontSize: RFValue(13), color: COLORS.textHeader, ...FONTS.lexendsemibold, paddingVertical: 2 }}>{item.draw_title}</Text>
+                                    <Text style={{ fontSize: RFValue(13), color: COLORS.textHeader, ...FONTS.lexendregular }}>{item.draw_sub_title}</Text>
+                                    <Text style={{ fontSize: RFValue(13), color: COLORS.element, ...FONTS.lexendregular, paddingVertical: 2 }}>₹{Number(item.product_price).toFixed(2)}</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
-                        <View style={{ marginLeft: "2%" }}>
-                            <Text style={{ fontSize: RFValue(16), color: COLORS.textHeader, ...FONTS.lexendsemibold, padding: "1%" }}>{item.product_title}</Text>
-                            <Text style={{ fontSize: RFValue(16), color: COLORS.textHeader, ...FONTS.lexendregular, marginHorizontal: "1%", paddingBottom: "1%" }}>{item.product_description}</Text>
-                            <Text style={{ fontSize: RFValue(14), color: COLORS.element2, marginHorizontal: "1%", ...FONTS.lexendregular }}>₹{item.product_price}</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            )}
-        />
+                    )}
+                />
+                : <DrawEmpty value={"There are no Upcoming Draws at the moment. Please try again later."} />}
+        </View>
     )
 }
 const styles = StyleSheet.create({

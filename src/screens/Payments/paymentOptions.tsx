@@ -33,9 +33,9 @@ const PaymentOptions = () => {
                 <Text style={{ fontFamily: "Lexend-Regular", color: "white", fontSize: RFValue(20), width: "79%", textAlign: "center" }}>Payment Options</Text>
             </View>
             <View style={styles.subdivTwo}>
-                <Text style={{ fontFamily: "Lexend-Regular", color: COLORS.gray, fontSize:RFValue(13), width: "80%", textAlign: "center" }}>Once you make a purchase, your card(s) will appear here.</Text>
-                <TouchableOpacity style={{ borderWidth: 2, borderRadius: 10, width: "60%", marginTop: "7%" }} onPress={()=>navigation.navigate("AddNewPayee")}>
-                    <Text style={{ ...FONTS.lexendsemibold, color: COLORS.black, paddingVertical:verticalScale (15), textAlign: "center", fontSize: RFValue(15) }}>Start Shopping</Text>
+                <Text style={{ fontFamily: "Lexend-Regular", color: COLORS.gray, fontSize: RFValue(13), width: "80%", textAlign: "center" }}>Once you make a purchase, your card(s) will appear here.</Text>
+                <TouchableOpacity style={{ borderWidth: 1, borderRadius: 10, width: "60%", marginTop: "7%" }} onPress={() => navigation.navigate("AddNewPayee")}>
+                    <Text style={{ ...FONTS.lexendregular, color: COLORS.black, paddingVertical: verticalScale(15), textAlign: "center", fontSize: RFValue(15) }}>Start Shopping</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

@@ -29,7 +29,6 @@ import User from './src/screens/User/user';
 import WishList from './src/screens/wishList';
 import OtpPage from './src/screens/otpPage';
 import PriceDetails from './src/screens/PriceDetails';
-import ProductDetails from './src/screens/productdetails';
 import Delivery from './src/screens/Cart/delivery';
 import Address from './src/screens/Cart/address';
 import AddAddress from './src/screens/Cart/addAddress';
@@ -54,6 +53,7 @@ import Playnowquiz from './src/screens/Myorders/playnowquiz';
 import Playnowquizsubmit from './src/screens/Myorders/playnowquizsubmit';
 import NetworkError from './src/screens/networkErrorPage';
 import EditAddress from './src/screens/Cart/editAddress';
+import OrderConfirmed from './src/component/orderConfirmed';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -72,7 +72,6 @@ const App = () => {
         <Stack.Screen name="ChangeMobileNumber" component={ChangeMobileNumber} />
         <Stack.Screen name="WishList" component={WishList} />
         <Stack.Screen name="PriceDetails" component={PriceDetails} />
-        <Stack.Screen name="ProductDetails" component={ProductDetails} />
         <Stack.Screen name="User" component={User} />
         <Stack.Screen name="Delivery" component={Delivery} />
         <Stack.Screen name="Address" component={Address} />
@@ -92,12 +91,13 @@ const App = () => {
         <Stack.Screen name="PersonalDetails" component={PersonalDetails} />
         <Stack.Screen name="HowItWorks" component={HowItWorks} />
         <Stack.Screen name="Coupons" component={Coupons} />
-        <Stack.Screen name="PlayNow" component={PlayNow}/>
-        <Stack.Screen name="playnowquiz" component={Playnowquiz}/>
-        <Stack.Screen name="Playnowquizsubmit" component={Playnowquizsubmit}/>
-        <Stack.Screen name="EditAddress" component={EditAddress}/>
-        <Stack.Screen name="NetworkError" component={NetworkError}/>
-        
+        <Stack.Screen name="PlayNow" component={PlayNow} />
+        <Stack.Screen name="playnowquiz" component={Playnowquiz} />
+        <Stack.Screen name="Playnowquizsubmit" component={Playnowquizsubmit} />
+        <Stack.Screen name="EditAddress" component={EditAddress} />
+        <Stack.Screen name="NetworkError" component={NetworkError} />
+        <Stack.Screen name="OrderConfirmed" component={OrderConfirmed} />
+
         < Stack.Screen
           name="Tabs"
           component={Tabs}

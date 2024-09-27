@@ -3,14 +3,14 @@ import { createSlice, createAsyncThunk, } from '@reduxjs/toolkit';
 import axios from 'axios'
 
 
-export const addToCartHandler = createAsyncThunk('get/drawProductGetcall', async (data,thunkAPI) => {
+export const addToCartHandler = createAsyncThunk('get/drawProductGetcall', async (data, thunkAPI) => {
     try {
-        let key= await AsyncStorage.getItem("loginToken");
-       
-        const payload ={"draw":`${data}`} ;
-        const headers={"Authorization":`Bearer ${key}`}
-        console.log("inside..... ",payload)
-        let result = await axios.post(`${'https://api.grandealz.vytech.co'}/cart`,payload,{headers:headers});
+        let key = await AsyncStorage.getItem("loginToken");
+
+        const payload = { "draw": `${data}` };
+        const headers = { "Authorization": `Bearer ${key}` }
+        console.log("inside..... ", payload)
+        let result = await axios.post(`${'https://api.grandealz.vytech.co'}/cart`, payload, { headers: headers });
         // console.log("result inside the login page.....",result.data.data)
         // if (parseInt(result.data.status) === 200) {
         //     console.log({ responseData: result.data.data });
@@ -19,9 +19,9 @@ export const addToCartHandler = createAsyncThunk('get/drawProductGetcall', async
         //     console.log({responseData: result.data})
         // }else {
         //     console.log('Login Error', result);
-             return result.data
+        return result.data
         // }
-       
+
     } catch (error) {
         console.log('Login Catch Error', error);
     }
@@ -37,8 +37,8 @@ export const addToCartHandleSlice = createSlice({
     },
     reducers: {},
     extraReducers: (builder) => {
-       
-         console.log(addToCartHandler, "search response")
+
+        console.log(addToCartHandler, "search response")
         builder.addCase(addToCartHandler.fulfilled, (state, action) => {
             state.data = action.payload;
         })

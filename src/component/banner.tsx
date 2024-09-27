@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { FONTS } from '../constants';
 import icons from '../constants/icons';
 import image from '../constants/image';
-import { horizontalScale, moderateScale } from '../constants/metrices';
+import { verticalScale, horizontalScale, moderateScale } from '../constants/metrices';
 import { bannerHandler } from '../store/reducers/Banners';
 import { unwrapResult } from '@reduxjs/toolkit';
 
@@ -49,121 +49,126 @@ const Banner = (data) => {
             />
           }
         >
-          <View style={{ height: "100%", width: "100%", paddingRight: "2%" }}>
-            <ImageBackground
-              source={{ uri: banner[0].background_image }}
-              resizeMode="repeat"
-              imageStyle={{ borderRadius: 8 }}
-              style={{ flexDirection: "row", paddingHorizontal: "5%", paddingTop: "8.5%", height: "100%" }}
-            >
-              <View style={{ flexDirection: "column", width: "65%", height: "70%" }}>
-                <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "8%", marginTop: "2%" }}>{banner[0].title}</Text>
-                <Text style={{ color: "white", fontSize: moderateScale(11), ...FONTS.lexendregular, width: "100%", height: "35%" }}>{banner[0].title}</Text>
-                <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "30%" }}>{banner[0].description}</Text>
-                <TouchableOpacity style={{ borderWidth: 1, borderRadius: 8, borderColor: "white", width: "50%", height: "22%", justifyContent: "center" }} onPress={() => { banner[0].btn_url }}>
-                  <Text style={{ color: "white", fontSize: moderateScale(10), ...FONTS.lexendregular, textAlign: "center" }}>{banner[0].btn_text}</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ width: "35%", height: "63%", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                <Image
-                  source={{ uri: banner[0].image }}
-                  resizeMode="contain"
-                  style={{
-                    width: 170,
-                    height: 105,
-                    // right: 40
-                  }}
-                />
-              </View>
-            </ImageBackground>
-          </View>
-
-          <View style={{ height: "100%", width: "100%", paddingRight: "2%" }}>
-            <ImageBackground
-              source={{ uri: banner[1].background_image }}
-              resizeMode="repeat"
-              imageStyle={{ borderRadius: 8 }}
-              style={{ flexDirection: "row", paddingHorizontal: "5%", paddingTop: "8.5%", height: "100%" }}
-            >
-              <View style={{ flexDirection: "column", width: "65%", height: "70%" }}>
-                <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "8%", marginTop: "2%" }}>{banner[1].title}</Text>
-                <Text style={{ color: "white", fontSize: moderateScale(11), ...FONTS.lexendregular, width: "100%", height: "35%" }}>{banner[1].title}</Text>
-                <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "30%" }}>{banner[1].description}</Text>
-                <TouchableOpacity style={{ borderWidth: 1, borderRadius: 8, borderColor: "white", width: "50%", height: "22%", justifyContent: "center" }} onPress={() => { banner[1].btn_url }}>
-                  <Text style={{ color: "white", fontSize: moderateScale(10), ...FONTS.lexendregular, textAlign: "center" }}>{banner[1].btn_text}</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ width: "35%", height: "63%", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                <Image
-                  source={{ uri: banner[1].image }}
-                  resizeMode="contain"
-                  style={{
-                    width: 170,
-                    height: 105,
-                    // right: 40
-                  }}
-                />
-              </View>
-            </ImageBackground>
-          </View>
-
-          <View style={{ height: "100%", width: "100%", paddingRight: "2%" }}>
-            <ImageBackground
-              source={{ uri: banner[0].background_image }}
-              resizeMode="repeat"
-              imageStyle={{ borderRadius: 8 }}
-              style={{ flexDirection: "row", paddingHorizontal: "5%", paddingTop: "8.5%", height: "100%" }}
-            >
-              <View style={{ flexDirection: "column", width: "65%", height: "70%" }}>
-                <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "8%", marginTop: "2%" }}>{banner[0].title}</Text>
-                <Text style={{ color: "white", fontSize: moderateScale(11), ...FONTS.lexendregular, width: "100%", height: "35%" }}>{banner[0].title}</Text>
-                <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "30%" }}>{banner[0].description}</Text>
-                <TouchableOpacity style={{ borderWidth: 1, borderRadius: 8, borderColor: "white", width: "50%", height: "22%", justifyContent: "center" }} onPress={() => { banner[0].btn_url }}>
-                  <Text style={{ color: "white", fontSize: moderateScale(10), ...FONTS.lexendregular, textAlign: "center" }}>{banner[0].btn_text}</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ width: "35%", height: "63%", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                <Image
-                  source={{ uri: banner[0].image }}
-                  resizeMode="contain"
-                  style={{
-                    width: 170,
-                    height: 105,
-                    // right: 40
-                  }}
-                />
-              </View>
-            </ImageBackground>
-          </View>
-
-          {/* <View style={{ height: "100%", width: "100%" }}>
-            <ImageBackground
-              source={{ uri: banner[0].background_image }}
-              resizeMode="cover"
-              imageStyle={{ borderRadius: 8 }}
-              style={{ height: "100%", width: "100%", flexDirection: "row", paddingHorizontal: "5%", paddingTop: "8%" }}
-            >
-              <View style={{ flexDirection: "column", width: "65%", height: "80%", borderWidth: 2, borderColor: "white" }}>
-                <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular }}>{banner[0].title}</Text>
-                <Text style={{ color: "white", fontSize: moderateScale(11), ...FONTS.lexendregular }}>{banner[0].title}</Text>
-                <Text style={{ color: "white", fontSize: moderateScale(5), marginTop: "9%", ...FONTS.lexendregular, width: RFValue(170) }}>{banner[0].description}</Text>
-                <TouchableOpacity style={{ borderWidth: 1, borderRadius: 8, borderColor: "white", marginTop: "6%", width: "50%", height: "24%", justifyContent: "center" }} onPress={() => { banner[0].btn_url }}>
-                  <Text style={{ color: "white", fontSize: moderateScale(10), ...FONTS.lexendregular, textAlign: "center" }}>{banner[0].btn_text}</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ width: "35%", flexDirection: "column", alignItems: "center" }}>
-                <Image
-                  source={{ uri: banner[0].image }}
-                  resizeMode="contain"
-                  style={{
-                    width: 170,
-                    height: 100,
-                    // right: 40
-                  }}
-                />
-              </View>
-            </ImageBackground>
-          </View> */}
+          {banner[0] ?
+            <View style={{ height: "100%", width: "100%", paddingRight: "2%" }}>
+              <ImageBackground
+                source={{ uri: banner[0].background_image }}
+                resizeMode="repeat"
+                imageStyle={{ borderRadius: 8 }}
+                style={{ flexDirection: "row", paddingHorizontal: "5%", paddingTop: "8.5%", height: "100%" }}
+              >
+                <View style={{ flexDirection: "column", width: "65%", height: "70%" }}>
+                  <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "8%", marginTop: "2%" }}>{banner[0].title}</Text>
+                  <Text style={{ color: "white", fontSize: moderateScale(11), ...FONTS.lexendregular, width: "100%", height: "35%" }}>{banner[0].title}</Text>
+                  <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "30%" }}>{banner[0].description}</Text>
+                  <TouchableOpacity style={{ borderWidth: 1, borderRadius: 8, borderColor: "white", width: "50%", height: "22%", justifyContent: "center" }} onPress={() => { banner[0].btn_url }}>
+                    <Text style={{ color: "white", fontSize: moderateScale(10), ...FONTS.lexendregular, textAlign: "center" }}>{banner[0].btn_text}</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ width: "35%", height: "63%", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                  <Image
+                    source={{ uri: banner[0].image }}
+                    resizeMode="contain"
+                    style={{
+                      width: verticalScale(170),
+                      height: 105,
+                      // right: 40
+                    }}
+                  />
+                </View>
+              </ImageBackground>
+            </View>
+            : null}
+          {banner[1] ?
+            <View style={{ height: "100%", width: "100%", paddingRight: "2%" }}>
+              <ImageBackground
+                source={{ uri: banner[1].background_image }}
+                resizeMode="repeat"
+                imageStyle={{ borderRadius: 8 }}
+                style={{ flexDirection: "row", paddingHorizontal: "5%", paddingTop: "8.5%", height: "100%" }}
+              >
+                <View style={{ flexDirection: "column", width: "65%", height: "70%" }}>
+                  <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "8%", marginTop: "2%" }}>{banner[1].title}</Text>
+                  <Text style={{ color: "white", fontSize: moderateScale(11), ...FONTS.lexendregular, width: "100%", height: "35%" }}>{banner[1].title}</Text>
+                  <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "30%" }}>{banner[1].description}</Text>
+                  <TouchableOpacity style={{ borderWidth: 1, borderRadius: 8, borderColor: "white", width: "50%", height: "22%", justifyContent: "center" }} onPress={() => { banner[1].btn_url }}>
+                    <Text style={{ color: "white", fontSize: moderateScale(10), ...FONTS.lexendregular, textAlign: "center" }}>{banner[1].btn_text}</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ width: "35%", height: "63%", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                  <Image
+                    source={{ uri: banner[1].image }}
+                    resizeMode="contain"
+                    style={{
+                      width: 170,
+                      height: 105,
+                      // right: 40
+                    }}
+                  />
+                </View>
+              </ImageBackground>
+            </View>
+            : null}
+          {banner[2] ?
+            <View style={{ height: "100%", width: "100%", paddingRight: "2%" }}>
+              <ImageBackground
+                source={{ uri: banner[2].background_image }}
+                resizeMode="repeat"
+                imageStyle={{ borderRadius: 8 }}
+                style={{ flexDirection: "row", paddingHorizontal: "5%", paddingTop: "8.5%", height: "100%" }}
+              >
+                <View style={{ flexDirection: "column", width: "65%", height: "70%" }}>
+                  <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "8%", marginTop: "2%" }}>{banner[2].title}</Text>
+                  <Text style={{ color: "white", fontSize: moderateScale(11), ...FONTS.lexendregular, width: "100%", height: "35%" }}>{banner[2].title}</Text>
+                  <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "30%" }}>{banner[2].description}</Text>
+                  <TouchableOpacity style={{ borderWidth: 1, borderRadius: 8, borderColor: "white", width: "50%", height: "22%", justifyContent: "center" }} onPress={() => { banner[2].btn_url }}>
+                    <Text style={{ color: "white", fontSize: moderateScale(10), ...FONTS.lexendregular, textAlign: "center" }}>{banner[2].btn_text}</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ width: "35%", height: "63%", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                  <Image
+                    source={{ uri: banner[2].image }}
+                    resizeMode="contain"
+                    style={{
+                      width: 170,
+                      height: 105,
+                      // right: 40
+                    }}
+                  />
+                </View>
+              </ImageBackground>
+            </View>
+            : null}
+          {banner ? null :
+            <View style={{ height: "100%", width: "100%", paddingRight: "2%" }}>
+              <ImageBackground
+                source={image.backimage}
+                resizeMode="repeat"
+                imageStyle={{ borderRadius: 8 }}
+                style={{ flexDirection: "row", paddingHorizontal: "5%", paddingTop: "8.5%", height: "100%" }}
+              >
+                <View style={{ flexDirection: "column", width: "65%", height: "70%" }}>
+                  <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "8%", marginTop: "2%" }}>This is Lorem ipsum Text</Text>
+                  <Text style={{ color: "white", fontSize: moderateScale(11), ...FONTS.lexendregular, width: "100%", height: "35%" }}>This is Lorem ipsum Text</Text>
+                  <Text style={{ color: "white", fontSize: moderateScale(5), ...FONTS.lexendregular, width: "100%", height: "30%" }}>This is Lorem ipsum Text This is Lorem ipsum Text This is Lorem ipsum Text This is Lorem ipsum Text</Text>
+                  <TouchableOpacity style={{ borderWidth: 1, borderRadius: 8, borderColor: "white", width: "50%", height: "22%", justifyContent: "center" }} onPress={() => { }}>
+                    <Text style={{ color: "white", fontSize: moderateScale(10), ...FONTS.lexendregular, textAlign: "center" }}>Detail</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ width: "35%", height: "63%", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                  <Image
+                    source={image.group}
+                    resizeMode="contain"
+                    style={{
+                      width: 170,
+                      height: 105,
+                      // right: 40
+                    }}
+                  />
+                </View>
+              </ImageBackground>
+            </View>
+          }
           {/* <View style={{}}>
           <View style={{ backgroundColor: "#070022", borderRadius: 8, marginHorizontal: "1%" }}>
             <View style={{ marginVertical: "11.5%", marginHorizontal: "5%", flexDirection: "row", justifyContent: "space-between" }}>

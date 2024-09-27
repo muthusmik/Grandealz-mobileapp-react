@@ -1,4 +1,4 @@
-import React, { type PropsWithChildren,useState,useEffect } from 'react';
+import React, { type PropsWithChildren, useState, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -14,10 +14,10 @@ import {
 import moment from 'moment';
 import image from '../../constants/image';
 import icons from '../../constants/icons';
-import { COLORS,FONTS } from '../../constants';
-import {useNavigation } from '@react-navigation/native';
+import { COLORS, FONTS } from '../../constants';
+import { useNavigation } from '@react-navigation/native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { horizontalScale,verticalScale } from '../../constants/metrices';
+import { horizontalScale, verticalScale } from '../../constants/metrices';
 import { drawGetCall } from '../../services/register';
 
 const data = [
@@ -66,16 +66,14 @@ const data = [
   },
 ];
 const DrawsHeader = () => {
-  const navigation=useNavigation();
+  const navigation = useNavigation();
   const [close, setClose] = useState<any>();
   //drawGetCall
   useEffect(() => {
     //console.log("data..............");
     const soon = async () => {
       let closingData = await drawGetCall()
-      
       let result = closingData.data;
-      
       var a: any[] = [];
       result.map((e: { total_no_of_sold_out_tickets: number; total_no_of_tickets: number; }) => {
         var data = (e.total_no_of_sold_out_tickets * 100 / e.total_no_of_tickets);
@@ -86,7 +84,7 @@ const DrawsHeader = () => {
         //console.log(a, "data to maping")
         setClose(a)
       })
-      
+
     }
     soon();
 
@@ -94,28 +92,31 @@ const DrawsHeader = () => {
 
   return (
     <SafeAreaView >
-      <View style={{ }}>
+      <View style={{ marginStart: 14, marginVertical: 12 }}>
         <FlatList
           horizontal={true}
           data={close}
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ marginVertical: "4%",marginLeft:"2%",paddingRight:"75%"  }}
+          contentContainerStyle={{}}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
-            <View>
-              <TouchableOpacity style={{ backgroundColor: "white",marginHorizontal:"1%" }} onPress={()=>navigation.navigate("PriceDetails",item)}>
-                    <Image
-                      source={{uri: item.draw_image}}
-                      resizeMode="contain"
-                      style={{
-                        height:RFValue(80),
-                        width:RFValue(80),
-                      }}
-                    />
+            <View style={{ marginRight: 14 }}>
+              <TouchableOpacity style={{ backgroundColor: "white", borderRadius: 5 }} onPress={() => navigation.navigate("PriceDetails", item)}>
+                <View style={{ height: RFValue(85), width: RFValue(85) }}>
+                  <Image
+                    source={{ uri: item.draw_image }}
+                    resizeMode="contain"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: 5
+                    }}
+                  />
+                </View>
               </TouchableOpacity>
-              <View style={{justifyContent:"center",alignItems:"center",padding:"2%"}}>
-                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(10), ...FONTS.lexendregular,}}>{moment(item.draw_date).format('Do MMM,YYYY')}</Text>
-                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(10), ...FONTS.lexendregular,}}>06:00 PM</Text>
+              <View style={{ justifyContent: "center", alignItems: "center", marginTop: 4 }}>
+                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(10), ...FONTS.lexendregular, }}>{moment(item.draw_date).format('Do MMM,YYYY')}</Text>
+                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(10), ...FONTS.lexendregular, }}>06:00 PM</Text>
               </View>
             </View>
           )}

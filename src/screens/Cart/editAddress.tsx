@@ -10,8 +10,10 @@ import {
     Image, TextInput,
     TouchableOpacity,
     Pressable,
-    ToastAndroid
+    Alert,
 } from 'react-native';
+import Toast from 'react-native-simple-toast';
+
 import { horizontalScale, moderateScale, verticalScale } from "../../constants/metrices";
 import { shoppingCart } from "../../constants/icons";
 import EntypoIcons from "react-native-vector-icons/Entypo";
@@ -42,10 +44,13 @@ import { EditAddressHandle } from "../../services/editAddress";
 
 
 const EditAddress = ({ route }) => {
-    const edit = route.params;
+    const typeUser = route.params.type;
+    console.log(route.params.totalAmount);
+    const totalAmount = route.params.totalAmount;
+    const edit = route.params.data;
     const [isSelected, setSelection] = useState(false);
     const CheckBoxes = () => {
-        
+
         return (
             <View style={{ flexDirection: "row", left: horizontalScale(17) }}>
                 <CheckBox
@@ -62,38 +67,46 @@ const EditAddress = ({ route }) => {
 
     //const { handleChange, handleSubmit, formErrors, data, formValues } = useForm(validate);
     const [Name, setName] = useState<any>("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState<any>("");
     const [city, setCity] = useState<any>("");
-    const [errorCity, setErrorCity] = useState(null);
+    const [errorCity, setErrorCity] = useState<any>(null);
     const [stateses, setStateses] = useState<any>("");
-    const [errorStateses, setErrorStateses] = useState(null);
+    const [errorStateses, setErrorStateses] = useState<any>(null);
 
-    const [errorName, setErrorName] = useState('');
+    const [errorName, setErrorName] = useState<any>('');
     const [phone, setPhone] = useState<any>("");
-    const [errorPhone, setErrorPhone] = useState('');
+    const [errorPhone, setErrorPhone] = useState<any>('');
     const [pincode, setPincode] = useState<any>("");
-    const [errorPin, setErrorPin] = useState('');
+    const [errorPin, setErrorPin] = useState<any>('');
     const [address, setAddress] = useState<any>("");
-    const [errorAddress, setErrorAddress] = useState('');
+    const [errorAddress, setErrorAddress] = useState<any>('');
     const [locality, setLocality] = useState<any>("");
-    const [errorLocality, setErrorLocality] = useState('');
+    const [errorLocality, setErrorLocality] = useState<any>('');
+    const [addressType, setAddressType] = useState<any>();
 
-    const [stateIso, setStateIso] = useState(null);
+    const [stateIso, setStateIso] = useState<any>(null);
     const [country, setCountry] = useState<any>("");
     const [cityError, setCityError] = useState('');
-    const [countryListValue, setCountryListValue] = useState([])
-    const [countryValue, setCountryValue] = useState<any>(null)
-    const [stateListValue, setStateListValue] = useState([])
-    const [stateValue, setStateValue] = useState<any>('')
-    const [cityListValue, setCityListValue] = useState([])
-    const [cityValue, setCityValue] = useState<any>('')
-    const [countryError, setCountryError] = useState("")
-    const [stateError, setStateError] = useState("")
-    const [cityData, setCityData] = useState();
-    const [stateData, setStateData] = useState();
-    const [countryData, setCountryData] = useState();
-
+    const [countryListValue, setCountryListValue] = useState<any>([])
+    const [countryValue, setCountryValue] = useState<any>({
+        "currency": "INR", "flag": "????", "isoCode": "IN", "name": "India", "phonecode": "91"
+    })
+    const [stateListValue, setStateListValue] = useState<any>([])
+    const [stateValue, setStateValue] = useState<any>(null)
+    const [cityListValue, setCityListValue] = useState<any>([])
+    const [cityValue, setCityValue] = useState<any>(null)
+    const [countryError, setCountryError] = useState<any>("")
+    const [stateError, setStateError] = useState<any>("")
+    const [cityData, setCityData] = useState<any>();
+    const [stateData, setStateData] = useState<any>();
+    const [countrycode, setCountryCode] = useState<any>("")
+    const [countryData, setCountryData] = useState<any>();
+    const [optionHo, setOptionHo] = useState<any>(false)
+    const [optionWo, setOptionWo] = useState<any>(false)
+    const [addressError, setAddressError] = useState<any>();
     const navigation = useNavigation();
+
+    const addresslist = useSelector((state) => state.AddressHandle.data);
 
     const getaddressList = async () => {
         let eacall = await EditAddressHandle(edit).then((address) => {
@@ -103,58 +116,114 @@ const EditAddress = ({ route }) => {
             setAddress(address.address)
             setLocality(address.locality_town)
             setCity(address.city.name)
+            setCityData(address.city)
+            setStateData(address.state)
             setStateses(address.state.name)
             setCountry(address.country.name)
-            console.log(address.country.name, "address to edit in this page ")
-            //console.log("Personal Details Country....", originalPromiseResult);
-            // const value = originalPromiseResult
+            setSelection(address.is_default_address)
+            setCountryValue(address.country)
+            setStateValue(address.state)
+            setStateIso(address.state.isoCode),
+                setAddressType(address.address_type === "Home" ? 0 : 1)
+            console.log(address, "address to edit in this page")
+            getCountryList();
+            if (address.country.isoCode) {
+                getStateList(address.country.isoCode);
+            }
+
         })
     }
+
+    useEffect(() => {
+        if (addresslist.length === 2) {
+            setOptionHo(true)
+            setOptionWo(true)
+        }
+        if (address) {
+            if (address.address_type === "Home") {
+                setOptionHo(true)
+
+            }
+            if (address.address_type === "Work") {
+                setOptionWo(true)
+            }
+        }
+        getaddressList()
+    }, [])
+
     const validateFunction = () => {
-        console.log("values", Name, address, phone, locality, pincode);
-
+        //firstName
         let errorCount = 0;
-        if (Name.length <= 3 || Name === undefined) {
-            setErrorName('Name is Required')
+        if (Name.length < 3) {
+            setErrorName('Please enter maximum 15 characters for Name (Minimum can be 2) as someone has name like Jo (alphabets only)')
+            errorCount++;
+        }
+        if (Name.length < 1) {
+            setErrorName('Please enter Name')
+            errorCount++;
+        }
+        if (address.length <= 1) {
+            setErrorAddress('Please enter Address')
             errorCount++;
         }
 
-        if (address.length <= 3 || address === undefined) {
-            setErrorAddress('address is required')
+        if (address.length >= 60) {
+            setErrorAddress('Please enter maximum 60 characters for Address')
             errorCount++;
         }
-        if (pincode.length < 5) {
-            setErrorPin('please enter  valid pincode')
+        if (pincode.length < 6) {
+            setErrorPin('Please enter Pincode')
             errorCount++;
         }
-
-        if (locality.length == 0) {
+        if (locality.length > 20) {
+            setErrorLocality("Please enter maximum 20 characters for Locality/Town")
+            errorCount++;
+        }
+        if (locality.length <= 2) {
             setErrorLocality('Please enter Locality')
             errorCount++;
         }
 
         if (phone.length < 10) {
-            setErrorPhone('please enter valid Number')
+            setErrorPhone('Please enter at least 10 digits for Mobile Number')
             errorCount++;
         }
-        if (countryValue.length == 0) {
-            setCountryError('country is required')
+        if (phone.length < 1) {
+            setErrorPhone("Please enter Mobile No")
             errorCount++;
         }
-        if (cityValue.length == 0) {
-            setCityError('City is required')
+        if (addressType === undefined) {
+            setAddressError("Select address type")
             errorCount++;
-        }
-        if (stateValue.length == 0) {
-            setStateError('State is required')
         }
         if (errorCount === 0) {
             setErrorAddress(""), setErrorName(""), setErrorLocality(""), setErrorPhone(""), setErrorPin("");
             return true;
         }
+        if (errorCount > 0) {
+            if (Name.length > 3) {
+                setErrorName('');
+            }
+            if (address.length > 1) {
+                setErrorAddress('');
+            }
+            if (pincode.length > 5) {
+                setErrorPin('');
+            }
+            if (locality.length > 2) {
+                setErrorLocality('');
+            }
+            if (phone.length > 9) {
+                setErrorPhone('');
+            }
+            if (addressType != undefined) {
+                setAddressError('');
+            }
+        }
         else {
             return false;
         }
+
     }
     const handleSubmit = async () => {
         const validateLetter = validateFunction();
@@ -172,20 +241,18 @@ const EditAddress = ({ route }) => {
                     "countryCode": cityData.countryCode
                 },
                 "state": {
-
                     "name": stateData.name,
                     "isoCode": stateData.isoCode,
                     "countryCode": stateData.countryCode
-
                 },
                 "country": {
-                    "name": countryData.name,
-                    "isoCode": countryData.isoCode,
-                    "flag": countryData.flag,
-                    "phonecode": countryData.phonecode,
-                    "currency": countryData.currency
-                },
-                "address_type": "Home",
+                    "name": "India",
+                    "isoCode": "IN",
+                    "flag": "🇮🇳",
+                    "phonecode": "91",
+                    "currency": "INR"
+                },//countryData
+                "address_type": addressType == 0 ? "Home" : "Work",
                 "is_default_address": isSelected
             }
             const edaddresses = {
@@ -196,78 +263,45 @@ const EditAddress = ({ route }) => {
                 .then(unwrapResult)
                 .then((originalPromiseResult) => {
                     console.log("success samuvel you did itdone", originalPromiseResult);
-                    if (originalPromiseResult === "saved successfully") {
-                        ToastAndroid.showWithGravity(
-                            'Successfully added',
-                            ToastAndroid.SHORT,
-                            ToastAndroid.CENTER,
-                        );
+                    if (originalPromiseResult.message === "saved successfully") {
+                        Toast.show('Successfully Saved', Toast.LONG, { backgroundColor: 'red' });
+
                         dispatch(addressListHandler());
-                        navigation.navigate("Address");
+                        navigation.navigate("Address", { type: typeUser, amount: totalAmount });
                     }
                     else {
-                        ToastAndroid.showWithGravity(
-                            'Something went wrong!',
-                            ToastAndroid.SHORT,
-                            ToastAndroid.CENTER,
-                        );
+                        Toast.show('Something went wrong!', Toast.LONG, { backgroundColor: 'red' });
                     }
                 })
-            //    console.log(calling, "Personal Details Country....");
-            //     if (calling === "Success") {
-            //         ToastAndroid.showWithGravity(
-            //             'Successfully added',
-            //             ToastAndroid.SHORT,
-            //             ToastAndroid.CENTER,
-            //         );
-            //         dispatch(addressListHandler());
-            //         navigation.navigate("Address");
-            //     }
-            //     else {
-            //         ToastAndroid.showWithGravity(
-            //             'Something went wrong!',
-            //             ToastAndroid.SHORT,
-            //             ToastAndroid.CENTER,
-            //         );
-            //     }
         }
     }
-    
-    useEffect(() => {
-        getaddressList()
-        getCountryList();
-        const india=[{"currency": "INR", "flag": "????", "isoCode": "IN", "name": "India", "phonecode": "91"}];
-    setCountryListValue(india)
-    }, [])
+    // const getCountry=()=>
+    // getCountryList();
+    // // const india = [{ "currency": "INR", "flag": "????", "isoCode": "IN", "name": "India", "phonecode": "91" }];
+    // // setCountryListValue(india)
+    // }, [stateValue])
     const getCountryList = async () => {
         let listCountries = await countryList().then((originalPromiseResult) => {
-            //console.log("Personal Details Country....", originalPromiseResult);
-            // const value = originalPromiseResult
-            //setCountryListValue(originalPromiseResult);
+            console.log("Personal Details Country....", originalPromiseResult);
+            const value = originalPromiseResult
+            setCountryListValue(originalPromiseResult);
             console.log("listCoun", originalPromiseResult[56].name)
         })
     }
     const getStateList = async (data: any) => {
-        let listCountries = await stateList(data).then((originalPromiseResult) => {
-            //console.log("Personal Details State....", originalPromiseResult);
-            // const value = originalPromiseResult
+        // const data = "IN";
+        console.log("get satet value ..................", data);
+        let listState = await stateList(data).then((originalPromiseResult) => {
+            // console.log(stateValue, "Personal Details State222222222....", originalPromiseResult);
             setStateListValue(originalPromiseResult);
-            console.log("listCoun", originalPromiseResult)
         })
     }
     const getCityList = async (data: any) => {
         let listCity = await cityList(data).then((originalPromiseResult) => {
-            console.log("Personal Details City....", originalPromiseResult);
-            // const value = originalPromiseResult
+            //console.log("Personal Details City....", originalPromiseResult);
             setCityListValue(originalPromiseResult);
-            console.log("listCity", originalPromiseResult)
         })
     }
-    useEffect(() => {
-        if (countryValue) {
-            getStateList(countryValue);
-        }
-    }, [countryValue])
 
     const themeForList = {
         color: COLORS.black,
@@ -275,36 +309,38 @@ const EditAddress = ({ route }) => {
     }
     useEffect(() => {
         if (countryValue) {
-            if (stateValue) {
-                console.log("samuuuuuuuuuuuuu", countryValue, "county data", stateIso)
-                const data = { countryValue, stateIso }
-                getCityList(data);
-            }
-            //  else { Alert.alert("Select any state") }
-        }
-        // else { Alert.alert("Select any country") }
+            getStateList(countryValue)
+            console.log("UseEffect for state................");
 
-    }, [stateValue])
+        }
+    }, [countryValue])
+    useEffect(() => {
+        // getStateList()
+        if (stateIso) {
+            console.log("im inside the State ", stateValue);
+            console.log("samuuuuuuuuuuuuu", stateValue.countryCode, "county data", stateValue.isoCode)
+            const data = { countryValue, stateIso }
+            getCityList(data);
+            console.log("city listing in useeffect", data);
+
+        }
+        // else { Alert.alert("Select any state") }
+    }, [stateIso])
 
     const handleBox = () => {
         if (errorName) {
-            setName(""),
-                setName(""), setErrorName("");
+            setName(""), setErrorName("");
         }
         else if (errorPhone) {
-            setPhone("")
             setPhone(""), setErrorPhone("");
         }
         else if (errorPin) {
-            setPincode("")
             setPincode(""), setErrorPin("");
         }
         else if (errorAddress) {
-            setAddress("")
             setAddress(""), setErrorAddress("");
         }
         else if (errorLocality) {
-            setLocality("")
             setLocality(""), setErrorLocality("");
         }
     }
@@ -321,9 +357,9 @@ const EditAddress = ({ route }) => {
                 </TouchableOpacity>
                 <Text style={{ fontFamily: "Lexend-SemiBold", color: "white", fontSize: RFValue(20), width: horizontalScale(290), textAlign: "center" }}>Edit Address</Text>
             </View>
-            <ScrollView style={{ height: "80%" }}>
+            <ScrollView style={{ height: "100%" }} contentContainerStyle={{ paddingBottom: "5%" }}>
                 <Text style={{ color: COLORS.textHeader, fontSize: RFValue(13), ...FONTS.lexendregular, marginLeft: "5%", marginTop: "5%" }}>CONTACT DETAILS</Text>
-                <View style={{ marginHorizontal: "3%", marginVertical: "2%" }}>
+                <View style={{ marginHorizontal: "3%", marginTop: "2%" }}>
                     <Pressable onPressIn={() => handleBox()}>
                         <TextInput
                             placeholder="Name*"
@@ -331,33 +367,35 @@ const EditAddress = ({ route }) => {
                             maxLength={15}
                             placeholderTextColor={COLORS.gray}
                             onChangeText={(text: String) => setName(text)}
-                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(13),color:"black" }}
+                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(13), color: "black" }}
                         />
                     </Pressable>
                 </View>
-                <View>
+
+                <View style={{ height: (errorName) ? 16 : 8 }}>
                     {errorName ?
                         <Text style={styles.ErrorText}>{errorName}</Text> : null}
                 </View>
-                <View style={{ marginHorizontal: "3%" }}>
+                <View style={{ marginHorizontal: "3%", marginTop: "2%" }}>
                     <Pressable onPressIn={() => handleBox()}>
                         <TextInput
-                            keyboardType={"phone-pad"}
+                            keyboardType={"number-pad"}
                             placeholder="MobileNo*"
                             value={phone}
                             maxLength={10}
                             onChangeText={(text: String) => setPhone(text)}
                             placeholderTextColor={COLORS.gray}
-                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(13),color:"black" }}
+                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(13), color: "black" }}
                         />
                     </Pressable>
                 </View>
-                <View>
+
+                <View style={{ height: (errorPhone) ? 16 : 8 }}>
                     {errorPhone ?
                         <Text style={styles.ErrorText}>{errorPhone}</Text> : null}
                 </View>
                 <Text style={{ color: COLORS.textHeader, fontSize: RFValue(13), ...FONTS.lexendregular, marginLeft: "5%", marginTop: "3%" }}>ADDRESS</Text>
-                <View style={{ marginHorizontal: "3%", marginVertical: "2%" }}>
+                <View style={{ marginHorizontal: "3%", marginTop: "2%" }}>
                     <Pressable onPressIn={() => handleBox()}>
                         <TextInput
                             keyboardType={"phone-pad"}
@@ -366,31 +404,35 @@ const EditAddress = ({ route }) => {
                             maxLength={6}
                             placeholderTextColor={COLORS.gray}
                             onChangeText={(text: String) => setPincode(text)}
-                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(13),color:"black" }}
+                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(13), color: "black" }}
                         />
                     </Pressable>
                 </View>
-                <View>
-                    {errorPin ?
-                        <Text style={styles.ErrorText}>{errorPin}</Text> : null}
+
+                <View style={{ height: (errorPin) ? 16 : 8 }}>
+                    <Text style={styles.ErrorText}>{errorPin}</Text>
                 </View>
-                <View style={{ marginHorizontal: "3%", marginBottom: "2%" }}>
+                <View style={{ marginHorizontal: "3%", marginTop: "2%" }}>
                     <Pressable onPressIn={() => handleBox()}>
                         <TextInput
                             keyboardType={"default"}
+                            multiline={true}
+                            numberOfLines={4}
                             placeholder="Address (House No, Building, street, Area)*"
                             value={address}
                             placeholderTextColor={COLORS.gray}
                             onChangeText={(text: String) => setAddress(text)}
-                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(14),color:"black" }}
+                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(14), color: "black" }}
                         />
                     </Pressable>
                 </View>
-                <View>
+
+                <View style={{ height: (errorAddress) ? 16 : 8 }}>
                     {errorAddress ?
                         <Text style={styles.ErrorText}>{errorAddress}</Text> : null}
                 </View>
-                <View style={{ marginHorizontal: "3%", marginBottom: "2%" }}>
+
+                <View style={{ marginHorizontal: "3%", marginTop: "2%" }}>
                     <Pressable onPressIn={() => handleBox()}>
                         <TextInput
                             keyboardType={"default"}
@@ -399,39 +441,42 @@ const EditAddress = ({ route }) => {
                             maxLength={40}
                             onChangeText={(text: String) => setLocality(text)}
                             placeholderTextColor={COLORS.gray}
-                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(14),color:"black" }}
+                            style={{ paddingStart: 15, borderRadius: 8, width: "95%", backgroundColor: COLORS.white, alignSelf: "center", ...FONTS.lexendregular, fontSize: RFValue(14), color: "black" }}
                         />
                     </Pressable>
                 </View>
-                <View>
+
+                <View style={{ height: (errorLocality) ? 16 : 8 }}>
                     {errorLocality ?
                         <Text style={styles.ErrorText}>{errorLocality}</Text> : null}
                 </View>
-                <View style={{ flexDirection: "row", marginHorizontal: "2%" }}>
-                    <View style={{ flexDirection: "column", width: "48.5%" }}>
-                        <View style={{ marginHorizontal: "3%", marginBottom: "2%" }}>
+                <View style={{ flexDirection: "row", marginHorizontal: "3%", marginTop: "2%", width: "95%", alignItems: 'center' }}>
+                    <View style={{ flexDirection: "column", width: "46%", marginLeft: "2.5%" }}>
+                        <View>
                             <Dropdown
-                                style={{ width: "92%", backgroundColor: COLORS.white, alignSelf: "center", borderRadius: 8, padding: "2%", marginTop: "1%", paddingHorizontal: 14 }}
+                                style={{ width: "100%", backgroundColor: COLORS.white, alignSelf: "center", borderRadius: 8, padding: "2%", marginTop: "1%", paddingHorizontal: 14 }}
                                 placeholderStyle={styles.dropText}
                                 selectedTextStyle={styles.dropText}
+                                // disable={true}
                                 data={countryListValue}
                                 maxHeight={350}
                                 itemTextStyle={themeForList}
-                                placeholder={/* (country) ? country :*/ "Country"}
+                                placeholder={(country) ? country : "Country"}
                                 labelField="name"
                                 valueField="isoCode"
-                                onChange={item => { setCountryValue(item.isoCode), console.log("dbdgbdfbdg..........", item), setCountryData(item) }}
+                                onChange={item => { setCountryValue(item.isoCode), setCountryData(item) }}
                             />
                         </View>
-                        <View>
+
+                        <View style={{ height: (countryError) ? 16 : 8 }}>
                             {countryError ?
-                                <Text style={styles.ErrorText}>{countryError}</Text> : null}
+                                <Text style={styles.ErrorTextCountry}>{countryError}</Text> : null}
                         </View>
                     </View>
-                    <View style={{ flexDirection: "column", width: "50%" }}>
-                        <View style={{ marginHorizontal: "3%", marginBottom: "2%" }}>
+                    <View style={{ flexDirection: "column", width: "49%" }}>
+                        <View style={{ marginHorizontal: "3%" }}>
                             <Dropdown
-                                style={{ width: "91%", backgroundColor: COLORS.white, alignSelf: "center", borderRadius: 8, padding: "2%", marginTop: "1%", paddingHorizontal: 14 }}
+                                style={{ width: "100%", backgroundColor: COLORS.white, alignSelf: "center", borderRadius: 8, padding: "2%", marginTop: "1%", paddingHorizontal: 14 }}
                                 placeholderStyle={styles.dropText}
                                 selectedTextStyle={styles.dropText}
                                 data={stateListValue}
@@ -439,17 +484,18 @@ const EditAddress = ({ route }) => {
                                 itemTextStyle={themeForList}
                                 labelField="name"
                                 valueField="name"
-                                onChange={item => { setStateValue(item.name), setStateIso(item.isoCode), console.log("dbdgbdfbdg..........", item), setStateData(item) }}
-                                placeholder={/* (stateses) ? stateses : */ "State*"}
+                                onChange={item => { setStateses(item.name), setStateIso(item.isoCode), setStateData(item) }}
+                                placeholder={(stateses) ? stateses : "State*"}
                             />
                         </View>
-                        <View>
+
+                        <View style={{ height: (stateError) ? 16 : 8 }}>
                             {stateError ?
-                                <Text style={styles.ErrorText}>{stateError}</Text> : null}
+                                <Text style={styles.ErrorTextState}>{stateError}</Text> : null}
                         </View>
                     </View>
                 </View>
-                <View style={{ marginHorizontal: "1%", marginBottom: "2%", marginTop: "2%" }}>
+                <View style={{ marginHorizontal: "1%", marginTop: "2%" }}>
                     <Dropdown
                         style={{ width: "91%", backgroundColor: COLORS.white, alignSelf: "center", borderRadius: 8, padding: "2%", marginTop: "1%", paddingHorizontal: 14 }}
                         placeholderStyle={styles.dropText}
@@ -457,33 +503,41 @@ const EditAddress = ({ route }) => {
                         data={cityListValue}
                         maxHeight={350}
                         itemTextStyle={themeForList}
-                        placeholder={/* (city) ? city : */ "Select City"}
+                        placeholder={(city) ? city : "Select City"}
                         labelField="name"
                         valueField="name"
-                        onChange={item => { setCityValue(item.name), console.log("dbdgbdfbdg..........", item), setCityData(item) }}
+                        onChange={item => { setCityValue(item.name), setCityData(item) }}
                     />
                 </View>
 
-                <View>
+                <View style={{ height: (cityError) ? 16 : 8 }}>
                     {cityError ?
                         <Text style={styles.ErrorText}>{cityError}</Text> : null}
                 </View>
 
-                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(13), ...FONTS.lexendregular, marginLeft: "5%", marginTop: "3%" }}>SAVE ADDRESS AS</Text>
+                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(13), ...FONTS.lexendregular, marginLeft: "5%", marginTop: "2%" }}>SAVE ADDRESS AS</Text>
                 <View style={{ marginVertical: "2%", flexDirection: "row", width: "89%", alignSelf: "center", borderRadius: 10, backgroundColor: COLORS.white }}>
-                    <TouchableOpacity style={{ paddingVertical: "5%", marginHorizontal: "5%" }}onPress={()=>{console.log("home")}}><Text style={styles.switch}>Home</Text></TouchableOpacity>
-                    <TouchableOpacity style={{ paddingVertical: "5%" }} onPress={()=>{console.log("work")}}><Text style={styles.switch}>Work</Text></TouchableOpacity>
-                </View>
 
-                <View style={{ marginHorizontal: "2%", marginBottom: "2%", padding: "2%", flexDirection: "row", width: "90%", borderRadius: 10, backgroundColor: COLORS.white, alignSelf: "center" }}>
-                    <View style={{ marginLeft: "-4%" }}><CheckBoxes /></View>
+                    <TouchableOpacity disabled={optionHo} style={{ paddingVertical: "5%", marginHorizontal: "5%", }} onPress={() => setAddressType(0)}>
+                        <Text style={{ ...styles.switch, backgroundColor: (addressType == 0) ? COLORS.element : "white", color: (addressType == 0) ? COLORS.white : COLORS.gray, borderColor: (addressType == 0) ? COLORS.element : COLORS.gray }}>Home</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity disabled={optionWo} style={{ paddingVertical: "5%", }} onPress={() => setAddressType(1)}>
+                        <Text style={{ ...styles.switch, backgroundColor: (addressType == 1) ? COLORS.element : "white", color: (addressType == 1) ? COLORS.white : COLORS.gray, borderColor: (addressType == 1) ? COLORS.element : COLORS.gray }}>Work</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ height: (addressError) ? 16 : 8 }}>
+                    {addressError ?
+                        <Text style={styles.ErrorText}>{addressError}</Text> : null}
+                </View>
+                <View style={{ marginHorizontal: "2%", marginTop: "2%", paddingVertical: "2%", flexDirection: "row", width: "90%", borderRadius: 10, backgroundColor: COLORS.white, alignSelf: "center" }}>
+                    <View><CheckBoxes /></View>
                     <Text style={{ color: COLORS.gray, fontSize: RFValue(12), ...FONTS.lexendregular, paddingHorizontal: "5%", alignSelf: "center" }}>Make this my default address</Text>
                 </View>
             </ScrollView>
-            <View style={{ flexDirection: "row", height: "8%", backgroundColor: COLORS.white, paddingVertical: "1%", paddingHorizontal: "2%" }}>
+            <View style={{ flexDirection: "row", height: 62, backgroundColor: COLORS.white, paddingVertical: "1%", paddingHorizontal: "2%" }}>
 
                 <TouchableOpacity style={{ flexDirection: "column", width: "90%", marginHorizontal: "5%", marginVertical: "1%", borderRadius: 5, borderWidth: 1, justifyContent: "center", alignItems: "center" }} onPress={e => { handleSubmit(), Keyboard.dismiss }} disabled={false}>
-                    <Text style={{ color: COLORS.textHeader, fontSize: RFValue(14), ...FONTS.lexendregular }}>Add Address</Text>
+                    <Text style={{ color: COLORS.textHeader, fontSize: RFValue(14), ...FONTS.lexendregular }}>Save Address</Text>
                 </TouchableOpacity>
 
             </View>
@@ -510,7 +564,6 @@ const styles = StyleSheet.create({
         ...FONTS.lexendregular,
         borderRadius: 4,
         borderWidth: 1,
-        borderColor: COLORS.gray,
         paddingVertical: "1%",
         paddingHorizontal: "4%"
     },
@@ -525,13 +578,27 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         borderWidth: 1,
         borderColor: "black",
+        color: COLORS.element
     },
     ErrorText: {
+        marginStart: "7%",
         color: "red",
         ...FONTS.lexendregular,
         fontSize: RFValue(10),
-        textAlign: "center",
-        width: horizontalScale(100)
+        textAlign: "left",
+
+    },
+    ErrorTextState: {
+        color: "red",
+        ...FONTS.lexendregular,
+        fontSize: RFValue(10),
+        marginStart: verticalScale(10),
+    },
+    ErrorTextCountry: {
+        color: "red",
+        ...FONTS.lexendregular,
+        fontSize: RFValue(10),
+        marginStart: verticalScale(4),
     },
     dropText: {
         ...FONTS.lexendregular,

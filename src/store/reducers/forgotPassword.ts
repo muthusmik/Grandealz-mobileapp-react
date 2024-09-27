@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, } from '@reduxjs/toolkit';
 import axios from 'axios'
-import { ToastAndroid } from 'react-native';
+import { Toast } from 'react-native-simple-toast';
 import { Forget_Password_Url } from '../../services/constant';
 
 export const forgotPasswordHandler = createAsyncThunk('posts/forgotpostcall', async (data, thunkAPI) => {
@@ -31,11 +31,10 @@ export const forgotPasswordHandler = createAsyncThunk('posts/forgotpostcall', as
         }
     } catch (error) {
         console.log('Forgot Catch Error', error);
-        ToastAndroid.showWithGravity(
+       Toast.show(
             'Please try again later',
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
-        );
+            Toast.SHORT,
+            );
     }
 })
 

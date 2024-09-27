@@ -8,22 +8,29 @@ const useForm = (validate) => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
 
-
   const handleChange = (e, name) => {
     // const { name, value } = e.target;
-    console.log(formValues, "useformdata.....");
+    // console.log(formValues, "useformdata.....");
     setFormValues({ ...formValues, [name]: e });
   };
+  
 
+  const syncvalue = (email,password) =>{
+
+      setFormValues({email,password})
+       console.log(formValues, "samuel data////////////////////////////////");
+  }
   const handleSubmit = (e, type) => {
-
-    e.preventDefault();
+    console.log("uuuuuuuuuuuuuuuuutttttt",formValues)
+    // e.preventDefault();
     switch (type) {
       case '1': console.log("Login Page", type);
         if (formValues.email && formValues.password) {
+          console.log("type",formValues,".............",validate(formValues))
           setFormErrors(validate(formValues))
         }
         else {
+          console.log("typeElse",formValues,".............",validate(formValues))
           if (!formValues.email && !formValues.password) {
 
             let Error = { "email": "Please enter EmailId!","password":"Please enter valid password" }
@@ -87,13 +94,14 @@ const useForm = (validate) => {
   };
 
   useEffect(() => {
+    console.log("hellooo",formErrors)
     if (Object.keys(formErrors).length === 0 && isSubmit) {
       console.log(formValues, 'formValues.......', formErrors, "samuel");
       setData(formValues);
     }
   }, [formErrors]);
 
-  return { handleChange, details, handleSubmit, formErrors, data, formValues }
+  return { handleChange, details, handleSubmit, formErrors, data, formValues,syncvalue }
 
 }
 export default useForm;

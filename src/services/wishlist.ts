@@ -11,7 +11,7 @@ export const wishlistHandle = async () => {
         console.log("Responce in active ticket call",response.data.data);
          return response.data.data
     }).catch((err) => {
-        console.log("catch error Api error", err);
+        console.log("catch error Api error ... wishli", err);
     })
 
 }
@@ -27,7 +27,7 @@ export const addToWishlistHandle = async (data:string) => {
         console.log("Responce in active ticket call",response);
          return response
     }).catch((err) => {
-        console.log("catch error Api error", err);
+        console.log("catch error Api error... addwishli", err);
     })
 
 }

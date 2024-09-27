@@ -19,14 +19,7 @@ import { horizontalScale, verticalScale } from "../../constants/metrices";
 // import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { loginicon } from "../../constants/icons";
 
-
-
-
-
 const Home = (props: Props) => {
-
-
-
 
   return (
     <View style={styles.root}>

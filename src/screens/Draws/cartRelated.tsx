@@ -20,65 +20,18 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { horizontalScale, moderateScale, verticalScale } from '../../constants/metrices';
 import { CartDrawlistHandle } from "../../services/cartdrawslist";
 import { useIsFocused } from "@react-navigation/core";
-import { ToastAndroid } from 'react-native';
+import Toast from 'react-native-simple-toast';
 import { AddtoCartHandle } from "../../services/addtocart";
-const data = [
-    {
-        id: '1',
-        imag: image.cash,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
 
-    },
-    {
-        id: '2',
-        imag: image.cash,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-    {
-        id: '3',
-        imag: image.cash,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-    {
-        id: '4',
-        imag: image.cash,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-    {
-        id: '5',
-        imag: image.cash,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-    {
-        id: '6',
-        imag: image.cash,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-    {
-        id: '7',
-        imag: image.cash,
-        from: "Lorem ipsum dolor sit amet Lorem ipsum dolor ipsum doolr",
-        to: "1689 sold out 1985"
-    },
-];
-
-
-
-
-const CartRelated = ({cartdts,changer,setChanger}) => {
-
+const CartRelated = ({ cartdts, changer, setChanger }) => {
     const navigation = useNavigation();
-
     const isFocused = useIsFocused();
-    const [similarproduct, setSimilarproduct] = useState();
+    const [similarproduct, setSimilarproduct] = useState<any>();
     const [drawid, setDrawid] = useState();
-    const[cartList,setCartList]=useState(cartdts);
+    const [count, setCount] = useState(0);
+    const [logic, setLogic] = useState(true)
+    const [cartList, setCartList] = useState(cartdts);
+
     useEffect(() => {
         if (isFocused) {
             cartIdList();
@@ -91,36 +44,43 @@ const CartRelated = ({cartdts,changer,setChanger}) => {
             cartIdList();
         }
     }, [isFocused])
-    
+
     const CartDrawlist = async () => {
         let drawdatalist = await CartDrawlistHandle()
-        console.log("DrawData on cart Draw.............", drawdatalist)
-        setSimilarproduct(drawdatalist)
+        var Alreadysoldout: any = [];
+        (drawdatalist.data).forEach((element: any) => {
+            if (element.total_no_of_sold_out_tickets / element.total_no_of_tickets != 1) {
+                Alreadysoldout.push(element);
+            }
+        })
+        setSimilarproduct(Alreadysoldout)
     }
-    const AddtoCartitems = async () => {
-        const payload={"draw": drawid,"qty":1}
-        let AddItemtoCart = await AddtoCartHandle(payload)
-        if (AddItemtoCart.status === "200") {
-            ToastAndroid.showWithGravity(
-                AddItemtoCart.message,
-                ToastAndroid.SHORT,
-                ToastAndroid.CENTER,
-            );
-            setChanger(!changer);
+    useEffect(() => {
+
+        if (similarproduct) {
+            { cartList.length === similarproduct.length ? setLogic(false) : setLogic(true) }
         }
-        else {
-            ToastAndroid.showWithGravity(
-                AddItemtoCart.message,
-                ToastAndroid.SHORT,
-                ToastAndroid.CENTER,
-            );
-            setChanger(!changer);
+    }, [cartList])
+
+    useEffect(() => {
+        if (drawid) {
+            const AddtoCartitems = async () => {
+                const payload = { "draw": drawid, "qty": 1 }
+                let AddItemtoCart = await AddtoCartHandle(payload)
+                if (AddItemtoCart.status === "200") {
+                    setChanger(!changer);
+                }
+                else {
+                    Toast.show(AddItemtoCart.message, Toast.LONG, { backgroundColor: 'red' });
+                    setChanger(!changer);
+                }
+            }
+            AddtoCartitems()
         }
-    }
-    const cartIdList=()=>{
+    }, [drawid])
+    const cartIdList = () => {
         var AlreadyInCart: any[] = [];
         let data = cartdts?.draws;
-        // console.log("dtaaaa.....................", data.length)
         if (data) {
             (data).forEach((element: any) => {
                 var Data = (element.draw._id);
@@ -129,62 +89,56 @@ const CartRelated = ({cartdts,changer,setChanger}) => {
         }
         setCartList(AlreadyInCart);
     }
-
-
-
     return (
-
         <View>
-            <View style={{ marginVertical: "5%" }}>
-                <Text style={{ color: "#616161", fontSize: RFValue(14), ...FONTS.lexendregular, }}>People Have also bought this together</Text>
-            </View>
-            {/* <View style={{borderWidth:2}}> */}
-            <FlatList
-                horizontal={true}
-                data={similarproduct?.data}
-                showsHorizontalScrollIndicator={false}
-                // contentContainerStyle={{ marginLeft: "4%" }}
-                ItemSeparatorComponent={() => (
-                    <View style={{ width: 15 }} />
-                )}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <View style={{ backgroundColor: COLORS.white, borderRadius: 14, width: RFValue(154), height: RFValue(246), padding: RFValue(15) }}>
-                        <TouchableOpacity>
-                            {/* <View style={{}}>
-
-                            </View> */}
-                            <View style={{ backgroundColor: "#F9F9F9", padding: "2%" }}>
-                                <Image
-                                    source={{ uri: item.product_image }}
-                                    resizeMode={'contain'}
-                                    style={{
-                                        height: RFValue(95),
-                                        width: RFValue(95),
-                                        margin: 10
-                                    }}
-                                />
-                            </View>
-                        </TouchableOpacity>
-                        <View style={{}}>
-                            <Text style={{ color: COLORS.textHeader, fontSize: RFValue(13), ...FONTS.lexendsemibold, paddingBottom: "2%", marginTop: RFValue(5) }}>{item.product_title}</Text>
-                            <Text style={{ color: "#616161", fontSize: RFValue(13), ...FONTS.lexendregular, paddingBottom: "2%" }}>{item.product_description}</Text>
-                            <Text style={{ color: COLORS.element, fontSize: RFValue(13), ...FONTS.lexendregular, }}>{item.currency}{item.product_price}</Text>
-                        </View>
-                       { !(cartList.includes(`${item._id}`)) ?
-                        <TouchableOpacity style={{ justifyContent: "center", alignItems: "center", borderWidth: 1, borderRadius: 5, marginTop: RFValue(5), width: RFValue(113), alignSelf: "center", height: RFValue(26) }} onPress={() => { setDrawid(item._id),AddtoCartitems()}}>
-                            <Text style={{ color: COLORS.textHeader, fontSize: RFValue(13), ...FONTS.lexendregular, }}>Add</Text>
-                        </TouchableOpacity>
-                        :
-                        <TouchableOpacity style={{ justifyContent: "center", alignItems: "center", borderWidth: 1, borderRadius: 5, marginTop: RFValue(5), width: RFValue(113), alignSelf: "center", height: RFValue(26),backgroundColor:COLORS.black }} >
-                        <Text style={{ color: COLORS.white, fontSize: RFValue(13), ...FONTS.lexendregular, }}>Added</Text>
-                    </TouchableOpacity>}
+            {logic ?
+                <>
+                    <View style={{ marginVertical: "4%" }}>
+                        <Text style={{ color: "#616161", fontSize: RFValue(13), ...FONTS.lexendsemibold, }}>People Have also bought this together</Text>
                     </View>
-                )}
-            />
-            {/* </View> */}
+                    <FlatList
+                        horizontal={true}
+                        data={similarproduct}
+                        showsHorizontalScrollIndicator={false}
+                        // ItemSeparatorComponent={() => (
+                        //     <View style={{ width: 10 }} />
+                        // )}
+                        keyExtractor={item => item.id}
+                        renderItem={({ item }) => (
+                            <>
+                                {!(cartList.includes(`${item._id}`)) ?
+                                    <View style={{ marginRight: 14 }}>
+                                        <View style={{ backgroundColor: COLORS.white, borderRadius: 5, width: RFValue(154), padding: RFValue(15) }}>
+                                            <TouchableOpacity>
+                                                <View style={{ backgroundColor: "#F9F9F9", padding: 4 }}>
+                                                    <Image
+                                                        source={{ uri: item.product_image }}
+                                                        resizeMode={'contain'}
+                                                        style={{
+                                                            height: RFValue(95),
+                                                            width: RFValue(95),
+                                                            margin: 10
+                                                        }}
+                                                    />
+                                                </View>
+                                            </TouchableOpacity>
+                                            <View>
+                                                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(12), ...FONTS.lexendsemibold, marginVertical: 4 }}>{item.currency} {item.product_price} Cash</Text>
+                                                <Text style={{ color: "#616161", fontSize: RFValue(12), ...FONTS.lexendregular, marginBottom: 2 }}>{item.product_title}</Text>
+                                                <Text style={{ color: COLORS.element, fontSize: RFValue(12), ...FONTS.lexendregular, }}>₹{Number(item.product_price).toFixed(2)}</Text>
+                                            </View>
+                                            <TouchableOpacity style={{ justifyContent: "center", alignItems: "center", borderWidth: 1, borderRadius: 5, marginTop: 16, height: verticalScale(26), width: "90%", alignSelf: "center" }} onPress={() => { setDrawid(item._id), setCount(count + 1) }}>
+                                                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(13), ...FONTS.lexendregular }}>Add</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    : null}
+                            </>
+                        )}
+                    />
+                </>
+                : null}
         </View>
-
     )
 }
 const styles = StyleSheet.create({

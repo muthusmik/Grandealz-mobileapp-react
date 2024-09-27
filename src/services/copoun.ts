@@ -18,3 +18,15 @@ export const couponPage = async () => {
         console.log("Catch error Api Failed", err)
     })
 }
+
+export const removeCoup = async () => {
+    const key = await fetchJSONAsync()
+    const headers = { 'Content-Type': 'Application/json', 'accept': '*/*','Authorization': "Bearer " + key }
+
+    return await axios.put(`${'https://api.grandealz.vytech.co'}/cart/remove-coupon`,{},{ headers: headers }).then(response => {
+        console.log("Response coupon", response.data);
+        return response.data
+    }).catch((err) => {
+        console.log("Catch error Api Failed", err)
+    })
+}

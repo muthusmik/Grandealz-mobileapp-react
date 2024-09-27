@@ -20,6 +20,7 @@ export const registerHandler = createAsyncThunk('posts/loginPostcall', async (da
         }
     } catch (error) {
         console.log('Login Catch Error', error);
+        return 404;
     }
 
 })

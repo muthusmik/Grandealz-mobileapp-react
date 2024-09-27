@@ -38,7 +38,7 @@ const DetailedProduct = ({ route }) => {
 
             </View>
             <ScrollView style={{ height: "80%", padding: "4%" }}>
-                <View style={{ width: "100%", alignItems: "center" }}>
+                <View style={{ width: "100%", alignSelf:"center" }}>
                     <View style={{ padding: 20, borderRadius: 10, alignItems: "center", width: "100%", backgroundColor: COLORS.white }}>
                         <Image
                             source={{uri:value.item.product_image}}

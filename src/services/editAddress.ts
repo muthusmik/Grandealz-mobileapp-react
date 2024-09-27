@@ -1,6 +1,6 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ToastAndroid } from 'react-native';
+import  Toast from 'react-native-simple-toast';
 
 
 export const EditAddressHandle = async (data: any) => {
@@ -12,11 +12,10 @@ export const EditAddressHandle = async (data: any) => {
         console.log("Responce in delete api call",response.data.data);
          return response.data.data
     }).catch((err) => {
-        console.log("catch error Api error", err);
-        ToastAndroid.showWithGravity(
+        console.log("catch error Api error...EDIT", err);
+        Toast.show(
             'Please try again later',
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
+            Toast.SHORT,
         );
     })
 }

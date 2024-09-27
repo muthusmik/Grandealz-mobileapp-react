@@ -28,6 +28,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RemoveCouponHandle } from '../../services/removecoupon'
 import { useIsFocused } from "@react-navigation/core";
 import { ourCartPage } from "../../services/ourCart";
+import CartEmpty from "../ExceptionScreens/cartEmpty";
+import { removeCoup } from "../../services/copoun";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Cart = () => {
 
@@ -37,17 +40,23 @@ const Cart = () => {
     /*  # Remove Coupon */
     const [couponres, setCouponres] = useState();
     const [change, setChange] = useState<boolean>(false);
+    const [toggle, setToggle] = useState<boolean>(false)
     const [progress, setProgress] = useState([]);
     const [loader, setLoader] = useState<boolean>(false);
     const RemoveCoupon = async () => {
-        let CouponValue = await RemoveCouponHandle()
-        setCouponres(CouponValue)
+        const removedata = await removeCoup()
+        console.log("offer coupons", removedata);
+        if (removedata.message === "Success") {
+            setCouponres()
+            cartStock()
+            console.log("cart data", cartdata);
+
+        }
     }
-    // console.log("river", couponres)
+    useEffect(() => {
+        setCouponres(CouponPrice)
 
-
-    /*  # CartData */
-
+    }, [CouponPrice])
     const [cartdata, setCartData] = useState([])
     const isFocused = useIsFocused();
 
@@ -63,6 +72,10 @@ const Cart = () => {
         cartStock();
     }, [change])
 
+    useEffect(() => {
+        console.log("toggle", toggle)
+    }, [toggle])
+
     const cartStock = async () => {
         // setCartData([]);
         let shifter: any = [];
@@ -76,6 +89,22 @@ const Cart = () => {
         setLoader(false);
     }
 
+    const processCheckOut = async (value: any) => {
+        let userType = await AsyncStorage.getItem('userDetails');
+        let userDetails = JSON.parse(userType)
+        console.log("User Type........", userDetails.data.user.phone, ".................", value);
+        if (userDetails?.data?.user?.roles === "user") {
+            // navigation.navigate("Delivery", { "amount": cartdata?.total })
+            console.log("cartD", cartdata?.total);
+        }
+        else {
+            // navigation.navigate("OtpPage", { value: phone })
+            requestOtp(userDetails.data.user.phone)
+        }
+    }
+    const requestOtp = (mblNumber: any) => {
+
+    }
     return (
         <SafeAreaView style={{ backgroundColor: "#F1F1F", height: "100%" }}>
             <StatusBar
@@ -89,10 +118,10 @@ const Cart = () => {
                 (progress?.length > 0) ? (
                     <>
                         <ScrollView style={{ height: "80%", paddingHorizontal: "4%" }}>
-                            <View style={{ width: "100%", borderRadius: 20, backgroundColor: COLORS.white, margin: "2%", marginTop: "5%", alignSelf: "center" }}>
+                            <View style={{ width: "100%", borderRadius: 10, backgroundColor: COLORS.white, margin: "2%", marginTop: "5%", alignSelf: "center" }}>
                                 <TouchableOpacity onPress={() => { navigation.navigate("Coupons") }}>
-                                    <View style={{ flexDirection: "row", width: "100%", borderRadius: 10, padding: "3%", alignItems: "center", marginLeft: "3%" }}>
-                                        <View style={{ flexDirection: "column", width: "85%", }}>
+                                    <View style={{ flexDirection: "row", width: "100%", borderRadius: 6, padding: "3%", alignItems: "center", marginLeft: "3%" }}>
+                                        <View style={{ flexDirection: "column", width: "88%", }}>
                                             <View style={{ flexDirection: "row", alignItems: "center" }}>
                                                 <Image
                                                     source={image.coupon}
@@ -102,71 +131,43 @@ const Cart = () => {
                                                 <Text style={{ color: COLORS.textHeader, fontSize: RFValue(13), ...FONTS.lexendregular, marginStart: "5%" }}>Apply Coupon Code</Text>
                                             </View>
                                         </View>
-                                        <MCIcon name="chevron-right" size={moderateScale(35)} color={COLORS.black} style={{ flexDirection: "column", width: "75%" }} />
+                                        <MCIcon name="chevron-right" size={moderateScale(25)} color={COLORS.black} style={{ flexDirection: "column" }} />
                                     </View>
                                 </TouchableOpacity>
-                                {(CouponPrice) ? (
-                                    <View style={{ flexDirection: "row", width: "100%", borderBottomStartRadius: 18, borderBottomEndRadius: 18, backgroundColor: "#FFCACD", alignItems: "center" }}>
-                                        <Text style={{ flexDirection: "column", width: "80%", color: COLORS.textHeader, fontSize: RFValue(13), ...FONTS.lexendregular, padding: "3%", marginStart: "5%", fontWeight: "700" }}>{CouponPrice.coupon_code} Applied</Text>
-                                        <Text style={{ flexDirection: "column", width: "15%", color: COLORS.textHeader, fontSize: RFValue(11), ...FONTS.lexendregular, }}>-₹{CouponPrice.coupon_discount}{"\n"}
-                                            <TouchableOpacity >
-                                                <Text style={{ color: COLORS.element, fontSize: RFValue(10), ...FONTS.lexendregular }}>Remove</Text>
-                                            </TouchableOpacity>
-                                        </Text>
+                                {(couponres) ? (
+                                    <View style={{ flexDirection: "row", width: "100%", borderBottomStartRadius: 6, borderBottomEndRadius: 6, backgroundColor: "#FFCACD", alignItems: "center", justifyContent: "space-between" }}>
+                                        <Text style={{ flexDirection: "column", color: COLORS.textHeader, fontSize: RFValue(12), ...FONTS.lexendregular, padding: 10 }}>{CouponPrice.coupon_code} Applied</Text>
+                                        <View style={{ flexDirection: "column", alignItems: "center" }}>
+                                            <Text style={{ flexDirection: "column", color: COLORS.textHeader, fontSize: RFValue(10), ...FONTS.lexendregular, paddingHorizontal: 10 }}>-₹{CouponPrice.coupon_discount.toFixed(2)}{"\n"}
+                                                <TouchableOpacity onPress={() => { RemoveCoupon() }}>
+                                                    <Text style={{ color: COLORS.element, fontSize: RFValue(10), ...FONTS.lexendregular }}>Remove</Text>
+                                                </TouchableOpacity>
+                                            </Text>
+                                        </View>
                                     </View>
                                 ) : null}
                             </View>
-                            {/* # Coins */}
-                            {/* <View style={{ width: "100%", borderRadius: 10, backgroundColor: "#0B0029", margin: "2%", alignSelf: "center" }}>
-                    <View style={{ flexDirection: "row", width: "100%", borderRadius: 10, paddingVertical: "3%" }}>
-                        <View style={{ flexDirection: "column", width: "45%", alignItems: "center", justifyContent: "center" }}>
-                            <View style={{ flexDirection: "row" }}>
-                                <Image
-                                    source={image.coin}
-                                    resizeMode={"contain"}
-                                    style={{ height: 20, width: 20 }}
-                                />
-                                <Text style={{ color: COLORS.white, fontSize: RFValue(14), ...FONTS.lexendregular, marginStart: "5%" }}>50 coins</Text>
-                                <Text style={{ color: COLORS.white, fontSize: RFValue(10), ...FONTS.lexendregular, marginTop: "1.5%", marginHorizontal: "4%" }}>-₹ 20</Text>
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: "column", width: "32%", marginStart: "20%" }}>
-                            {apply ?
-                                <TouchableOpacity style={{ flexDirection: "row", backgroundColor: COLORS.element, borderRadius: 5, alignItems: "center", justifyContent: "center", borderWidth: 1, }} onPress={() => setApply(!apply)}>
-                                    <Text style={{ color: COLORS.white, fontSize: RFValue(14), ...FONTS.lexendregular, marginStart: "5%", padding: "4%" }}>Remove</Text>
-                                </TouchableOpacity> :
-                                <TouchableOpacity style={{ flexDirection: "row", borderColor: Colors.white, borderRadius: 5, alignItems: "center", justifyContent: "center", borderWidth: 1, }} onPress={() => setApply(!apply)}>
-                                    <Text style={{ color: COLORS.white, fontSize: RFValue(14), ...FONTS.lexendregular, marginStart: "5%", padding: "4%" }}>Apply</Text>
-                                </TouchableOpacity>
-                            }
-                        </View>
-                    </View>
-                </View> */}
-                            <CartProducts cartval={cartdata} changer={change} setChanger={setChange} />
+                            <CartProducts cartval={cartdata} changer={change} setChanger={setChange} swith={setToggle} />
                             <CartRelated cartdts={cartdata} changer={change} setChanger={setChange} />
                             <PriceMap priceval={cartdata} />
                         </ScrollView>
                         <View style={{ flexDirection: "row", height: "8%", backgroundColor: COLORS.white, padding: "2%" }}>
-                            <TouchableOpacity style={{ flexDirection: "column", width: "45%", borderRadius: 5, borderWidth: 1, justifyContent: "center", alignItems: "center", marginLeft: "3%" }}>
-                                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(11), ...FONTS.lexendsemibold }}>Continue to Shopping</Text>
+                            <TouchableOpacity style={{ flexDirection: "column", width: "45%", borderRadius: 5, borderWidth: 1, justifyContent: "center", alignItems: "center", marginLeft: "3%" }} onPress={() => { navigation.navigate("Tabs", { screen: "DataPage" }) }}>
+                                <Text style={{ color: COLORS.textHeader, fontSize: RFValue(11), ...FONTS.lexendregular }}>Continue to Shopping</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ flexDirection: "column", width: "45%", backgroundColor: COLORS.element, borderRadius: 5, justifyContent: "center", alignItems: "center", marginLeft: "4%", }} onPress={() => { navigation.navigate("Delivery") }}>
-                                <Text style={{ color: COLORS.white, fontSize: RFValue(11), ...FONTS.lexendregular }} >Process to Checkout </Text>
-                            </TouchableOpacity>
+                            {!toggle ?
+                                <TouchableOpacity style={{ flexDirection: "column", width: "45%", backgroundColor: COLORS.element, borderRadius: 5, justifyContent: "center", alignItems: "center", marginLeft: "4%", }} onPress={() => processCheckOut({ "amount": cartdata?.total })/* navigation.navigate("Delivery", { "amount": cartdata?.total }) */}>
+                                    <Text style={{ color: COLORS.white, fontSize: RFValue(11), ...FONTS.lexendregular }} >Process to Checkout</Text>
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity style={{ flexDirection: "column", width: "45%", backgroundColor: COLORS.element, borderRadius: 5, justifyContent: "center", alignItems: "center", marginLeft: "4%", }} onPress={() => { navigation.navigate("OrderConfirmed") }}>
+                                    <Text style={{ color: COLORS.white, fontSize: RFValue(11), ...FONTS.lexendregular }} >Pay Now</Text>
+                                </TouchableOpacity>
+                            }
                         </View>
                     </>
                 ) :
-                    <View style={styles.subdivTwo}>
-                        <Image
-                            source={shoppingCart}
-                            resizeMode='contain'
-                            style={{
-                                width: horizontalScale(80),
-                                height: verticalScale(80),
-                            }}
-                        />
-                        <Text style={{ fontFamily: "Lexend-Regular", color: "black", fontSize: 16, marginTop: 20 }}>Your cart in empty</Text>
-                    </View>
+                    <CartEmpty />
                 :
                 <View style={{ width: "100%", alignItems: "center", paddingBottom: "5%", height: "100%", justifyContent: "center" }}>
                     <LoaderKit

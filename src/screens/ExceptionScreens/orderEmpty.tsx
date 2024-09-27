@@ -20,9 +20,10 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { FONTS } from "../../constants";
 
 
-const OrderEmpty = () => {
+const OrderEmpty = ({value}) => {
     const navigation = useNavigation();
-
+    const errorText=value
+    console.log(value,"error")
     return (
         <SafeAreaView style={{height:"90%",width:"100%",}}>
             <View  style={styles.container}>
@@ -32,7 +33,7 @@ const OrderEmpty = () => {
                 resizeMode="contain"
                 style={{ height: verticalScale(400), width: horizontalScale(180),top:verticalScale(5) }}
             />
-            <Text style={styles.text1}>You haven't placed any order yet!</Text>
+            <Text style={styles.text1}>{errorText}</Text>
             {/* </View> */}
             </View>
         </SafeAreaView>
@@ -58,6 +59,7 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         height:"100%",
         width:"100%",
+        top:"5%"
         // borderWidth:2
     },
     view1: {
@@ -76,7 +78,9 @@ const styles = StyleSheet.create({
     },
     text1: {
         alignContent: "center",
-        color:" #616161",
+        textAlign:"center",
+        color:"black",
+        margin:"5%",
         ...FONTS.lexendregular,
         fontSize: moderateScale(13),
         marginStart:horizontalScale(20)

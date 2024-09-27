@@ -1,63 +1,57 @@
-import React from "react";
-import { Image, View, Text, Button, TouchableOpacity } from 'react-native';
+import React, { useEffect } from "react";
+import { Image, View, Text, Button, TouchableOpacity, Platform } from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
-
+import { productDrawHandler } from '../../store/reducers/productdraw';
 import DataPage from "../Home/dataPage";
 import Draws from "../Draws/draws";
 import NotificationList from "../Home/notificationList";
 import Tickets from "../Tickets/tickets";
 import Cart from "../Cart/cart";
 import { icons, COLORS, FONTS } from "../../constants";
-import Icon from 'react-native-vector-icons/FontAwesome'
-import BrandIcons from "react-native-vector-icons/Ionicons"
-import EntypoIcons from "react-native-vector-icons/Entypo";
-
+import { useDispatch, useSelector } from 'react-redux';
 import { RFValue } from "react-native-responsive-fontsize";
-import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons'
-import SLIcon from 'react-native-vector-icons/SimpleLineIcons'
+
 const Tab = createBottomTabNavigator();
 
 const tabOptions = {
     showLabel: false,
-
     tabStyle:
-        [{ backgroundColor: COLORS.white }],
-    style: {
-        height: 95,
-        shadowColor: COLORS.white,
-        shadowOffset: {
-            width: 0,
-            height: 10,
-        },
-        shadowOpacity: 0.53,
-        shadowRadius: 13.97,
-
-        elevation: 21,
-    },
+        [{ backgroundColor: COLORS.white, borderWidth: 2 }],
 };
 
 const Tabs = () => {
+    const dispatch = useDispatch();
     const navigation = useNavigation();
+    useEffect(() => {
+        dispatch(productDrawHandler())
+    }, [])
+
     return (
         <Tab.Navigator
             backBehavior="initialRoute"
             initialRouteName={'DataPage'}
-            tabBarOptions={tabOptions}
+            // tabBarOptions={tabOptions}
             screenOptions={({ route }) => ({
-                tabBarStyle: { height: RFValue(70) },
+                tabBarShowLabel: false,
+                tabBarStyle: { height: Platform.OS === "ios" ? RFValue(88) : RFValue(65) },
                 tabBarIcon: ({ focused }) => {
                     const tintColor = focused ? COLORS.element : COLORS.gray;
 
                     switch (route.name) {
                         case "Notification":
                             return (
-                                <View style={{ alignItems: "center", bottom: "15%" }}>
-                                    <View>{focused ? <Image source={icons.tabTopSlide}
-                                        resizeMode="contain"
-                                        style={{ width: 30, height: 20 }}
-                                    /> : <View style={{ width: 30, height: 20 }} />}</View>
-                                    <View>
+                                <View style={{ height: "100%" }}>
+                                    <View style={{ width: 36, height: 4, alignSelf: "center", margin: 0, padding: 0 }}>
+                                        {focused &&
+                                            <Image
+                                                source={icons.tabTopSlide}
+                                                resizeMode="contain"
+                                                style={{ width: "100%", height: "100%" }}
+                                            />
+                                        }
+                                    </View>
+                                    <View style={{ marginTop: 7, alignItems: "center" }}>
                                         {focused ? <Image
                                             source={icons.tabBellColor}
                                             resizeMode="contain"
@@ -74,18 +68,22 @@ const Tabs = () => {
                                                     height: RFValue(26)
                                                 }}
                                             />}
+                                        <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(9) }}>Notifications</Text>
                                     </View>
-                                    <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(10) }}>Notifications</Text>
                                 </View>
                             );
                         case "Draws":
                             return (
-                                <View style={{ alignItems: "center", bottom: "15%" }}>
-                                    <View>{focused ? <Image source={icons.tabTopSlide}
-                                        resizeMode="contain"
-                                        style={{ width: 30, height: 20 }}
-                                    /> : <View style={{ width: 30, height: 20 }} />}</View>
-                                    <View>
+                                <View style={{ height: "100%" }}>
+                                    <View style={{ width: 36, height: 4, alignSelf: "center", margin: 0, padding: 0 }}>
+                                        {focused &&
+                                            <Image source={icons.tabTopSlide}
+                                                resizeMode="contain"
+                                                style={{ width: "100%", height: "100%" }}
+                                            />
+                                        }
+                                    </View>
+                                    <View style={{ marginTop: 7, alignItems: "center" }}>
                                         {focused ? <Image
                                             source={icons.tabDrawColor}
                                             resizeMode="contain"
@@ -102,18 +100,21 @@ const Tabs = () => {
                                                     height: RFValue(26)
                                                 }}
                                             />}
+                                        <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(9) }}>Draws</Text>
                                     </View>
-                                    <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(10) }}>Draws</Text>
                                 </View>
                             );
                         case "DataPage":
                             return (
-                                <View style={{ alignItems: "center", bottom: "15%" }}>
-                                    <View>{focused ? <Image source={icons.tabTopSlide}
-                                        resizeMode="contain"
-                                        style={{ width: 30, height: 20 }}
-                                    /> : <View style={{ width: 30, height: 20 }} />}</View>
-                                    <View>
+                                <View style={{ height: "100%" }}>
+                                    <View style={{ width: 36, height: 4, alignSelf: "center", margin: 0, padding: 0 }}>
+                                        {focused &&
+                                            <Image source={icons.tabTopSlide}
+                                                resizeMode="contain"
+                                                style={{ width: "100%", height: "100%" }}
+                                            />}
+                                    </View>
+                                    <View style={{ marginTop: 7, alignItems: "center" }}>
                                         {focused ? <Image
                                             source={icons.tabHomeColor}
                                             resizeMode="contain"
@@ -130,46 +131,52 @@ const Tabs = () => {
                                                     height: RFValue(26)
                                                 }}
                                             />}
+                                        <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(9) }}>Home</Text>
                                     </View>
-                                    <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(10) }}>Home</Text>
                                 </View>
                             );
                         case "Tickets":
                             return (
-                                <View style={{ alignItems: "center", bottom: "15%" }}>
-                                    <View>{focused ? <Image source={icons.tabTopSlide}
-                                        resizeMode="contain"
-                                        style={{ width: 30, height: 20 }}
-                                    /> : <View style={{ width: 30, height: 20 }} />}</View>
-                                    <View>
+                                <View style={{ height: "100%" }}>
+                                    <View style={{ width: 36, height: 4, alignSelf: "center", margin: 0, padding: 0 }}>
+                                        {focused &&
+                                            <Image source={icons.tabTopSlide}
+                                                resizeMode="contain"
+                                                style={{ width: "100%", height: "100%" }}
+                                            />}
+                                    </View>
+                                    <View style={{ marginTop: 7, alignItems: "center" }}>
                                         {focused ? <Image
                                             source={icons.tabTicketColor}
                                             resizeMode="contain"
                                             style={{
-                                                width: RFValue(30),
-                                                height: RFValue(25),
+                                                width: RFValue(26),
+                                                height: RFValue(26),
                                             }}
                                         /> :
                                             <Image
                                                 source={icons.tabTicketNoColor}
                                                 resizeMode="contain"
                                                 style={{
-                                                    width: RFValue(30),
-                                                    height: RFValue(25),
+                                                    width: RFValue(26),
+                                                    height: RFValue(26),
                                                 }}
                                             />}
+                                        <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(9) }}>Tickets</Text>
                                     </View>
-                                    <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(10) }}>Tickets</Text>
                                 </View>
                             );
                         case "Cart":
                             return (
-                                <View style={{ alignItems: "center", bottom: "15%" }}>
-                                    <View>{focused ? <Image source={icons.tabTopSlide}
-                                        resizeMode="contain"
-                                        style={{ width: 30, height: 20 }}
-                                    /> : <View style={{ width: 30, height: 20 }} />}</View>
-                                    <View>
+                                <View style={{ height: "100%" }}>
+                                    <View style={{ width: 36, height: 4, alignSelf: "center", margin: 0, padding: 0 }}>
+
+                                        {focused && <Image source={icons.tabTopSlide}
+                                            resizeMode="contain"
+                                            style={{ width: "100%", height: "100%" }}
+                                        />}
+                                    </View>
+                                    <View style={{ marginTop: 7, alignItems: "center" }}>
                                         {focused ? <Image
                                             source={icons.tabTrolleyColor}
                                             resizeMode="contain"
@@ -186,12 +193,11 @@ const Tabs = () => {
                                                     height: RFValue(26),
                                                 }}
                                             />}
+                                        <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(9) }}>Cart</Text>
+
                                     </View>
-                                    <Text style={{ color: tintColor, ...FONTS.lexendregular, fontSize: RFValue(10) }}>Cart</Text>
                                 </View>
-
                             );
-
                     }
                 }
             })}
@@ -311,10 +317,8 @@ const Tabs = () => {
                     //     fontSize: RFValue(16, 580)
                     // }
                 }}
-                // {...backBehavior:'none'}
-
+            // {...backBehavior:'none'}
             />
-
         </Tab.Navigator>
     );
 };

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk,} from '@reduxjs/toolkit';
 import axios from 'axios'
-import { ToastAndroid } from 'react-native';
+import { Toast } from 'react-native-simple-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const addressListHandler = createAsyncThunk('get/addresslistgetcall', async (data, thunkAPI) => {
@@ -14,17 +14,16 @@ export const addressListHandler = createAsyncThunk('get/addresslistgetcall', asy
             return result.data.data
         } else if (parseInt(result.data.status) == 404) {
             // console.log({responseData: result.data})
-            return result.data.message
+            return result.data.data
         } else {
             console.log('address Error', result);
             return result.data.message
         }
     } catch (error) {
         console.log('address Catch Error', error);
-        ToastAndroid.showWithGravity(
+        Toast.show(
             'Please try again later',
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
+            Toast.SHORT,
         );
     }
 })
@@ -32,7 +31,7 @@ export const addressListHandler = createAsyncThunk('get/addresslistgetcall', asy
 export const addressListHandlerSlice = createSlice({
     name: 'AddressHandle',
     initialState: {
-        data: "No data",
+        data: [],
         isSuccess: false,
         message: "",
         loading: false,

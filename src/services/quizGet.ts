@@ -20,3 +20,19 @@ export const quizGet = async () => {
         console.log("Catch error Api Failed", err)
     })
 }
+
+
+export const orderdata = async (data) => {
+    const key = await fetchJSONAsync()
+    const payload= data
+    const headers = { 'Content-Type': 'Application/json', 'Authorization': "Bearer " + key }
+    console.log("Data............",data);
+    
+    return await axios.get(`${'https://api.grandealz.vytech.co'}/orders/${payload}`,{ headers: headers }).then(response => {
+
+        console.log("order question................", response);
+        return response.data
+    }).catch((err) => {
+        console.log("Catch error Api Failed", err)
+    })
+}

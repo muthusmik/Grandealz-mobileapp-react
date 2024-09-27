@@ -29,42 +29,41 @@ const Landing = (props: Props) => {
 
 
   useEffect(() => {
-
     setTimeout(() => {
       setAuthLoaded(true);
       setAnimationLoaded(true);
     }, 2000);
   }, []);
 
-const authentication=async()=>{
-    let Token= await AsyncStorage.getItem('loginToken');
-    if(Token){
-
+  const authentication = async () => {
+    let Token = await AsyncStorage.getItem('loginToken');
+    if (Token) {
       props.navigation.replace('Tabs');
-    }else{
+    } else {
       props.navigation.replace('login');
     }
-}
+  }
 
   useEffect(() => {
     if (authLoaded && animationLoaded) {
-      
       authentication();
     }
   }, [authLoaded, animationLoaded, props.navigation]);
+
   return (
     <View style={styles.root}>
       <Image
         source={loginicon}
         resizeMode="contain"
         style={{
-            height:verticalScale(150),
-            width:horizontalScale(130)
-           }}
+          height: verticalScale(150),
+          width: horizontalScale(130)
+        }}
       />
     </View>
   )
 }
+
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -73,4 +72,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#0a0127'
   },
 });
+
 export default Landing;
